@@ -1,52 +1,152 @@
 {
   "kind": "build_request",
-  "title": "Fix critical issues in media tracker",
-  "priority": "high",
+  "title": "Add Community Reviews social feed page with reactions",
+  "projectName": "Media Tracker",
+  "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Investigate and resolve any runtime errors, broken functionality, or visual issues currently affecting the media tracker application",
+      "text": "Create a new Community Reviews page at route /community that displays all users' reviews in a unified feed without linking to individual user collections or profile pages",
       "target": "both",
       "source": {
         "messageIds": [
-          "msg-4"
-        ],
-        "quotes": [
-          "fix it!!!!!!!!!!!!!!!!!!"
+          "msg-6"
         ]
       },
       "acceptanceCriteria": [
-        "All critical errors are identified and resolved",
-        "Application loads without console errors",
-        "All user interactions work as expected",
-        "Search, sort, and CRUD operations function correctly"
+        "New route /community is accessible",
+        "Page displays reviews from all users in chronological order",
+        "No links to user profiles or individual collections are present"
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Verify that the recently implemented search and sort features are working correctly across all media entries",
+      "text": "Add 'Community Reviews' navigation link in the header that navigates to the new Community Reviews page",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-4"
+          "msg-6"
         ]
       },
       "acceptanceCriteria": [
-        "Search filters media entries by title in real-time",
-        "Sort dropdown correctly orders entries by title A-Z/Z-A, rating high/low, and recently added",
-        "UI updates immediately when search or sort options change"
+        "Navigation link appears in the header alongside existing navigation",
+        "Clicking the link navigates to /community route"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Style Community Reviews page to match the existing dark theme with the same typography, spacing, rounded corners, hover effects, and gold/yellow rating bar style used in 'My Media Collection'",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-6"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Page uses the same dark background colors and warm cinematic palette",
+        "Typography matches existing pages (Inter and Playfair Display fonts)",
+        "Card spacing and rounded corners match MediaCard component",
+        "Hover effects are consistent with existing collection cards"
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Display each review as a standalone card containing media title, media type badge (Movie, TV Show, Video Game, etc.), rating using the existing RatingBar component, review text, reviewer name in subtle styling, and date posted",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-6"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Each review card shows the media title prominently",
+        "Media type badge displays the correct type with matching styling to existing badges",
+        "RatingBar component renders the rating value",
+        "Review text is displayed in full or with expansion capability",
+        "Reviewer name appears in muted/subtle text styling",
+        "Date posted is formatted and displayed clearly"
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "Automatically fetch and display a relevant image for each review using the media title, placing it at the top of each card with a consistent aspect ratio, showing a clean themed placeholder if no image is found, and implementing lazy loading for performance",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-6"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Images are fetched based on media title",
+        "Images appear at the top of each review card",
+        "All images maintain consistent aspect ratio across cards",
+        "Placeholder image matching the app theme displays when fetch fails",
+        "Images use lazy loading to improve initial page load performance"
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "text": "Implement an emoji reaction bar under each review with 👍 ❤️ 😂 😮 😢 🔥 emojis that allows users to react with dynamic count updates without page refresh",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-6"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Reaction bar displays all six emoji options below each review",
+        "Clicking an emoji increments its count immediately without refresh",
+        "Visual feedback indicates which reactions the current user has selected",
+        "Counts update in real-time when reactions are added"
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "text": "Store emoji reactions per review in the backend database and prevent duplicate reactions from the same user for the same emoji on the same review",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-6"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Reactions are persisted in the backend with review ID, user ID, and emoji type",
+        "System prevents a user from reacting with the same emoji multiple times on one review",
+        "Reaction counts are accurately retrieved and aggregated per review",
+        "Users can remove their reaction by clicking the same emoji again"
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "text": "Create backend endpoint to fetch all reviews across all users for the Community Reviews feed",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-6"
+        ]
+      },
+      "acceptanceCriteria": [
+        "New query function returns all media entries with reviews from all users",
+        "Response includes reviewer name/identifier for each entry",
+        "Results are sorted by creation date (newest first)",
+        "Function is accessible to all authenticated users"
       ]
     }
   ],
   "constraints": [
-    "Do not modify the core authentication flow or Internet Identity integration",
-    "Preserve existing data structures and backend schema",
-    "Maintain the current cinematic burgundy/gold/charcoal theme"
+    "Do not modify the existing My Media Collection page or Dashboard component",
+    "Do not create links to individual user collections or profile pages from Community Reviews",
+    "Maintain the current cinematic aesthetic with warm burgundy and gold tones",
+    "Use the existing RatingBar component without modification",
+    "Preserve all existing backend authorization and access control logic"
   ],
   "nonGoals": [
-    "Adding new features beyond bug fixes",
-    "Redesigning the UI",
-    "Adding filtering by genre or rating"
+    "Redesigning the existing collection page",
+    "Adding user profile pages or profile linking functionality",
+    "Implementing real-time WebSocket updates for reactions",
+    "Adding comment threads or nested discussions on reviews",
+    "Creating notification system for reactions",
+    "Implementing moderation or reporting features"
   ],
   "imageRequirements": {
     "required": [],

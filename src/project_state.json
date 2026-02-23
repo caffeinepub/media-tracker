@@ -1,30 +1,124 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "New project",
-  "architectural_notes": [],
+  "summary": "Media Tracker app with user collections, reviews, ratings, and a new Community Reviews social feed page",
+  "architectural_notes": [
+    "Dark theme with cinematic aesthetic (gold/yellow accents)",
+    "Review cards match existing collection page styling (rounded corners, hover effects)",
+    "Reactions stored per review in database with duplicate prevention per user",
+    "Media images fetched automatically by title with lazy loading"
+  ],
   "known_issues": [],
-  "isFixRequest": true,
+  "isFixRequest": false,
   "existing_features": [
     {
-      "id": "feature-investigate-and-resolve-any-runtime-errors-broken-functionality-or-visual-issues-currently-affecting-the-media-tracker-application",
-      "title": "Investigate and resolve any runtime errors, broken functionality, or visual issues currently affecting the media tracker application",
+      "id": "feature-create-a-new-community-reviews-page-at-route-community-that-displays-all-users-reviews-in-a-unified-feed-without-linking-to-individual-user-collections-or-profile-pages",
+      "title": "Create a new Community Reviews page at route /community that displays all users' reviews in a unified feed without linking to individual user collections or profile pages",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-verify-that-the-recently-implemented-search-and-sort-features-are-working-correctly-across-all-media-entries",
-      "title": "Verify that the recently implemented search and sort features are working correctly across all media entries",
+      "id": "feature-add-community-reviews-navigation-link-in-the-header-that-navigates-to-the-new-community-reviews-page",
+      "title": "Add 'Community Reviews' navigation link in the header that navigates to the new Community Reviews page",
       "reqIds": [
         "REQ-2"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-style-community-reviews-page-to-match-the-existing-dark-theme-with-the-same-typography-spacing-rounded-corners-hover-effects-and-gold-yellow-rating-bar-style-used-in-my-media-collection",
+      "title": "Style Community Reviews page to match the existing dark theme with the same typography, spacing, rounded corners, hover effects, and gold/yellow rating bar style used in 'My Media Collection'",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-display-each-review-as-a-standalone-card-containing-media-title-media-type-badge-movie-tv-show-video-game-etc-rating-using-the-existing-ratingbar-component-review-text-reviewer-name-in-subtle-styling-and-date-posted",
+      "title": "Display each review as a standalone card containing media title, media type badge (Movie, TV Show, Video Game, etc.), rating using the existing RatingBar component, review text, reviewer name in subtle styling, and date posted",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-automatically-fetch-and-display-a-relevant-image-for-each-review-using-the-media-title-placing-it-at-the-top-of-each-card-with-a-consistent-aspect-ratio-showing-a-clean-themed-placeholder-if-no-image-is-found-and-implementing-lazy-loading-for-performance",
+      "title": "Automatically fetch and display a relevant image for each review using the media title, placing it at the top of each card with a consistent aspect ratio, showing a clean themed placeholder if no image is found, and implementing lazy loading for performance",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-an-emoji-reaction-bar-under-each-review-with-emojis-that-allows-users-to-react-with-dynamic-count-updates-without-page-refresh",
+      "title": "Implement an emoji reaction bar under each review with 👍 ❤️ 😂 😮 😢 🔥 emojis that allows users to react with dynamic count updates without page refresh",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
     }
   ],
-  "new_feature_requests": [],
-  "projectName": "Fix critical issues in media tracker",
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Community Reviews page showing all users' reviews in unified feed",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Review cards with media title, type badge, rating bar, text, reviewer name, date",
+      "reqIds": [
+        "AR-1"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Auto-fetch media images with lazy loading and themed placeholder fallback",
+      "reqIds": [
+        "AR-1",
+        "AR-2"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Emoji reaction bar (👍 ❤️ 😂 😮 😢 🔥) with dynamic counts and database storage",
+      "reqIds": [
+        "AR-1",
+        "AR-2"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Community Reviews navigation link in header",
+      "reqIds": [
+        "AR-1"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-12",
+      "summary": "Store emoji reactions per review in the backend database and prevent duplicate reactions from the same user for the same emoji on the same review",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-13",
+      "summary": "Create backend endpoint to fetch all reviews across all users for the Community Reviews feed",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "status": "pending"
+    }
+  ],
+  "projectName": "Media Tracker",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

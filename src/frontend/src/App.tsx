@@ -4,6 +4,7 @@ import { Toaster } from '@/components/ui/sonner';
 import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import SharedMediaList from './pages/SharedMediaList';
+import CommunityReviews from './pages/CommunityReviews';
 
 const rootRoute = createRootRoute({
   component: () => (
@@ -25,7 +26,13 @@ const sharedRoute = createRoute({
   component: SharedMediaList,
 });
 
-const routeTree = rootRoute.addChildren([indexRoute, sharedRoute]);
+const communityRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/community',
+  component: CommunityReviews,
+});
+
+const routeTree = rootRoute.addChildren([indexRoute, sharedRoute, communityRoute]);
 
 const router = createRouter({ routeTree });
 

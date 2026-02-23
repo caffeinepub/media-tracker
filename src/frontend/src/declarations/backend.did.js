@@ -19,7 +19,6 @@ export const MediaType = IDL.Variant({
   'tvShow' : IDL.Null,
 });
 export const Time = IDL.Int;
-export const UserProfile = IDL.Record({ 'name' : IDL.Text });
 export const MediaEntry = IDL.Record({
   'id' : IDL.Nat64,
   'review' : IDL.Opt(IDL.Text),
@@ -29,9 +28,15 @@ export const MediaEntry = IDL.Record({
   'rating' : IDL.Opt(IDL.Nat),
   'dateAdded' : Time,
 });
+export const UserProfile = IDL.Record({ 'name' : IDL.Text });
+export const EmojiReaction = IDL.Record({
+  'count' : IDL.Nat,
+  'emoji' : IDL.Text,
+});
 
 export const idlService = IDL.Service({
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+  'addReaction' : IDL.Func([IDL.Nat64, IDL.Text], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
   'createMediaEntry' : IDL.Func(
       [IDL.Text, MediaType, IDL.Opt(IDL.Nat), IDL.Opt(IDL.Text)],
@@ -41,6 +46,7 @@ export const idlService = IDL.Service({
   'deleteMediaEntry' : IDL.Func([IDL.Nat64], [], []),
   'generateShareLink' : IDL.Func([IDL.Opt(Time)], [IDL.Nat64], []),
   'getAllProjectFilesZipBlob' : IDL.Func([], [IDL.Vec(IDL.Nat8)], ['query']),
+  'getAllReviews' : IDL.Func([], [IDL.Vec(MediaEntry)], ['query']),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
   'getMediaEntriesByShareLink' : IDL.Func(
@@ -54,13 +60,20 @@ export const idlService = IDL.Service({
       ['query'],
     ),
   'getMyMediaEntries' : IDL.Func([], [IDL.Vec(MediaEntry)], ['query']),
+  'getReactionCounts' : IDL.Func(
+      [IDL.Nat64],
+      [IDL.Vec(EmojiReaction)],
+      ['query'],
+    ),
   'getUserProfile' : IDL.Func(
       [IDL.Principal],
       [IDL.Opt(UserProfile)],
       ['query'],
     ),
   'grantAccessToUser' : IDL.Func([IDL.Principal], [], []),
+  'hasUserReacted' : IDL.Func([IDL.Nat64, IDL.Text], [IDL.Bool], ['query']),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+  'removeReaction' : IDL.Func([IDL.Nat64, IDL.Text], [], []),
   'revokeAccessFromUser' : IDL.Func([IDL.Principal], [], []),
   'revokeShareLink' : IDL.Func([IDL.Nat64], [], []),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
@@ -85,7 +98,6 @@ export const idlFactory = ({ IDL }) => {
     'tvShow' : IDL.Null,
   });
   const Time = IDL.Int;
-  const UserProfile = IDL.Record({ 'name' : IDL.Text });
   const MediaEntry = IDL.Record({
     'id' : IDL.Nat64,
     'review' : IDL.Opt(IDL.Text),
@@ -95,9 +107,12 @@ export const idlFactory = ({ IDL }) => {
     'rating' : IDL.Opt(IDL.Nat),
     'dateAdded' : Time,
   });
+  const UserProfile = IDL.Record({ 'name' : IDL.Text });
+  const EmojiReaction = IDL.Record({ 'count' : IDL.Nat, 'emoji' : IDL.Text });
   
   return IDL.Service({
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+    'addReaction' : IDL.Func([IDL.Nat64, IDL.Text], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
     'createMediaEntry' : IDL.Func(
         [IDL.Text, MediaType, IDL.Opt(IDL.Nat), IDL.Opt(IDL.Text)],
@@ -107,6 +122,7 @@ export const idlFactory = ({ IDL }) => {
     'deleteMediaEntry' : IDL.Func([IDL.Nat64], [], []),
     'generateShareLink' : IDL.Func([IDL.Opt(Time)], [IDL.Nat64], []),
     'getAllProjectFilesZipBlob' : IDL.Func([], [IDL.Vec(IDL.Nat8)], ['query']),
+    'getAllReviews' : IDL.Func([], [IDL.Vec(MediaEntry)], ['query']),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
     'getMediaEntriesByShareLink' : IDL.Func(
@@ -120,13 +136,20 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'getMyMediaEntries' : IDL.Func([], [IDL.Vec(MediaEntry)], ['query']),
+    'getReactionCounts' : IDL.Func(
+        [IDL.Nat64],
+        [IDL.Vec(EmojiReaction)],
+        ['query'],
+      ),
     'getUserProfile' : IDL.Func(
         [IDL.Principal],
         [IDL.Opt(UserProfile)],
         ['query'],
       ),
     'grantAccessToUser' : IDL.Func([IDL.Principal], [], []),
+    'hasUserReacted' : IDL.Func([IDL.Nat64, IDL.Text], [IDL.Bool], ['query']),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+    'removeReaction' : IDL.Func([IDL.Nat64, IDL.Text], [], []),
     'revokeAccessFromUser' : IDL.Func([IDL.Principal], [], []),
     'revokeShareLink' : IDL.Func([IDL.Nat64], [], []),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),

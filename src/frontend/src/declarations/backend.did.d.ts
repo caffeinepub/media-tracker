@@ -10,6 +10,7 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
+export interface EmojiReaction { 'count' : bigint, 'emoji' : string }
 export interface MediaEntry {
   'id' : bigint,
   'review' : [] | [string],
@@ -29,6 +30,7 @@ export type UserRole = { 'admin' : null } |
   { 'guest' : null };
 export interface _SERVICE {
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
+  'addReaction' : ActorMethod<[bigint, string], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
   'createMediaEntry' : ActorMethod<
     [string, MediaType, [] | [bigint], [] | [string]],
@@ -41,14 +43,18 @@ export interface _SERVICE {
    * / Implemented as query to indicate large response to TypeScript (up to 2MB allowed)
    */
   'getAllProjectFilesZipBlob' : ActorMethod<[], Uint8Array>,
+  'getAllReviews' : ActorMethod<[], Array<MediaEntry>>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
   'getMediaEntriesByShareLink' : ActorMethod<[bigint], Array<MediaEntry>>,
   'getMediaEntriesByUser' : ActorMethod<[Principal], Array<MediaEntry>>,
   'getMyMediaEntries' : ActorMethod<[], Array<MediaEntry>>,
+  'getReactionCounts' : ActorMethod<[bigint], Array<EmojiReaction>>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'grantAccessToUser' : ActorMethod<[Principal], undefined>,
+  'hasUserReacted' : ActorMethod<[bigint, string], boolean>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
+  'removeReaction' : ActorMethod<[bigint, string], undefined>,
   'revokeAccessFromUser' : ActorMethod<[Principal], undefined>,
   'revokeShareLink' : ActorMethod<[bigint], undefined>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,

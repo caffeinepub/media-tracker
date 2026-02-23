@@ -2,16 +2,11 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-investigate-and-resolve-any-runtime-errors-broken-functionality-or-visual-issues-currently-affecting-the-media-tracker-application",
-      "featureTitle": "Investigate and resolve any runtime errors, broken functionality, or visual issues currently affecting the media tracker application",
+      "featureId": "feature-create-a-new-community-reviews-page-at-route-community-that-displays-all-users-reviews-in-a-unified-feed-without-linking-to-individual-user-collections-or-profile-pages",
+      "featureTitle": "Create a new Community Reviews page at route /community that displays all users' reviews in a unified feed without linking to individual user collections or profile pages",
       "files": [
-        "frontend/src/components/AddMediaForm.tsx",
-        "frontend/src/components/LoginButton.tsx",
-        "frontend/src/components/MediaCard.tsx",
-        "frontend/src/components/MediaList.tsx",
-        "frontend/src/components/ProfileSetup.tsx",
-        "frontend/src/hooks/useMediaEntries.ts",
-        "frontend/src/pages/Dashboard.tsx"
+        "frontend/src/App.tsx",
+        "frontend/src/pages/CommunityReviews.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -27,10 +22,10 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-verify-that-the-recently-implemented-search-and-sort-features-are-working-correctly-across-all-media-entries",
-      "featureTitle": "Verify that the recently implemented search and sort features are working correctly across all media entries",
+      "featureId": "feature-add-community-reviews-navigation-link-in-the-header-that-navigates-to-the-new-community-reviews-page",
+      "featureTitle": "Add 'Community Reviews' navigation link in the header that navigates to the new Community Reviews page",
       "files": [
-        "frontend/src/pages/Dashboard.tsx"
+        "frontend/src/components/Layout.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -42,6 +37,87 @@
       ],
       "testIds": [
         "REQ-2"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-style-community-reviews-page-to-match-the-existing-dark-theme-with-the-same-typography-spacing-rounded-corners-hover-effects-and-gold-yellow-rating-bar-style-used-in-my-media-collection",
+      "featureTitle": "Style Community Reviews page to match the existing dark theme with the same typography, spacing, rounded corners, hover effects, and gold/yellow rating bar style used in 'My Media Collection'",
+      "files": [
+        "frontend/src/pages/CommunityReviews.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-3"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-display-each-review-as-a-standalone-card-containing-media-title-media-type-badge-movie-tv-show-video-game-etc-rating-using-the-existing-ratingbar-component-review-text-reviewer-name-in-subtle-styling-and-date-posted",
+      "featureTitle": "Display each review as a standalone card containing media title, media type badge (Movie, TV Show, Video Game, etc.), rating using the existing RatingBar component, review text, reviewer name in subtle styling, and date posted",
+      "files": [
+        "frontend/src/components/CommunityReviewCard.tsx",
+        "frontend/src/hooks/useReviewerProfile.ts",
+        "frontend/src/pages/CommunityReviews.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-4"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-automatically-fetch-and-display-a-relevant-image-for-each-review-using-the-media-title-placing-it-at-the-top-of-each-card-with-a-consistent-aspect-ratio-showing-a-clean-themed-placeholder-if-no-image-is-found-and-implementing-lazy-loading-for-performance",
+      "featureTitle": "Automatically fetch and display a relevant image for each review using the media title, placing it at the top of each card with a consistent aspect ratio, showing a clean themed placeholder if no image is found, and implementing lazy loading for performance",
+      "files": [
+        "frontend/src/components/CommunityReviewCard.tsx",
+        "frontend/src/hooks/useMediaImage.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-5"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-implement-an-emoji-reaction-bar-under-each-review-with-emojis-that-allows-users-to-react-with-dynamic-count-updates-without-page-refresh",
+      "featureTitle": "Implement an emoji reaction bar under each review with 👍 ❤️ 😂 😮 😢 🔥 emojis that allows users to react with dynamic count updates without page refresh",
+      "files": [
+        "frontend/src/components/CommunityReviewCard.tsx",
+        "frontend/src/components/ReactionBar.tsx",
+        "frontend/src/hooks/useReactions.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-6"
       ],
       "confidence": "high"
     }

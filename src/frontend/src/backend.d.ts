@@ -20,6 +20,10 @@ export interface MediaEntry {
 export interface UserProfile {
     name: string;
 }
+export interface EmojiReaction {
+    count: bigint;
+    emoji: string;
+}
 export enum MediaType {
     movie = "movie",
     videoGame = "videoGame",
@@ -31,6 +35,7 @@ export enum UserRole {
     guest = "guest"
 }
 export interface backendInterface {
+    addReaction(reviewId: bigint, emoji: string): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     createMediaEntry(title: string, mediaType: MediaType, rating: bigint | null, review: string | null): Promise<bigint>;
     deleteMediaEntry(id: bigint): Promise<void>;
@@ -40,14 +45,18 @@ export interface backendInterface {
      * / Implemented as query to indicate large response to TypeScript (up to 2MB allowed)
      */
     getAllProjectFilesZipBlob(): Promise<Uint8Array>;
+    getAllReviews(): Promise<Array<MediaEntry>>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
     getMediaEntriesByShareLink(shareLinkId: bigint): Promise<Array<MediaEntry>>;
     getMediaEntriesByUser(user: Principal): Promise<Array<MediaEntry>>;
     getMyMediaEntries(): Promise<Array<MediaEntry>>;
+    getReactionCounts(reviewId: bigint): Promise<Array<EmojiReaction>>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     grantAccessToUser(friend: Principal): Promise<void>;
+    hasUserReacted(reviewId: bigint, emoji: string): Promise<boolean>;
     isCallerAdmin(): Promise<boolean>;
+    removeReaction(reviewId: bigint, emoji: string): Promise<void>;
     revokeAccessFromUser(friend: Principal): Promise<void>;
     revokeShareLink(shareLinkId: bigint): Promise<void>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
