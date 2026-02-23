@@ -1,0 +1,18 @@
+{
+  "frontend/src/index.css": "Global styles with warm cinematic OKLCH color system featuring deep burgundy primary, gold accents, and charcoal backgrounds for both light and dark modes, plus custom font families (Inter and Playfair Display).",
+  "frontend/tailwind.config.js": "Tailwind configuration extending the theme with cinematic color palette, custom shadows (warm and gold), serif/sans font families, and design tokens matching the OKLCH color system.",
+  "frontend/src/App.tsx": "Main application component with TanStack Router setup, theme provider, and routes for dashboard and shared media list pages.",
+  "frontend/src/components/Layout.tsx": "Application layout component with header containing logo, login button, hero banner image, main content area, and footer with Caffeine attribution.",
+  "frontend/src/components/LoginButton.tsx": "Authentication button component using Internet Identity hook to handle login/logout with loading states and query cache clearing.",
+  "frontend/src/components/ProfileSetup.tsx": "Modal dialog for first-time user profile setup that prompts for name and saves to backend, preventing dismissal until completed.",
+  "frontend/src/components/MediaCard.tsx": "Reusable card component displaying individual media entries with type-specific badges, rating bar, review excerpt, and edit/delete actions for owners.",
+  "frontend/src/components/RatingBar.tsx": "Visual rating display component showing numerical score and color-coded progress bar (gold for high ratings, varying colors for lower scores).",
+  "frontend/src/components/MediaList.tsx": "Grid layout component for displaying media entries with empty state messaging for both personal and shared lists.",
+  "frontend/src/components/AddMediaForm.tsx": "Modal form for creating and editing media entries with title, type selector, rating slider, and review textarea fields.",
+  "frontend/src/components/ShareMediaList.tsx": "Dialog component for generating shareable links with copy-to-clipboard functionality and link revocation option.",
+  "frontend/src/pages/Dashboard.tsx": "Main authenticated user dashboard displaying personal media collection with add, edit, and share functionality, plus profile setup integration.",
+  "frontend/src/pages/SharedMediaList.tsx": "Public page for viewing shared media collections in read-only mode with owner name display and error handling for invalid links.",
+  "frontend/src/hooks/useUserProfile.ts": "React Query hooks for fetching and saving user profiles with proper loading state handling to prevent modal flash.",
+  "frontend/src/hooks/useMediaEntries.ts": "React Query hooks for CRUD operations on media entries (create, read, update, delete) with cache invalidation and toast notifications.",
+  "frontend/src/hooks/useShareLink.ts": "React Query hooks for share link generation, revocation, fetching shared entries, and retrieving owner profile information."
+}
