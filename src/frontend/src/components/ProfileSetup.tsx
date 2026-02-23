@@ -1,53 +1,62 @@
-import { useState } from 'react';
-import { useSaveCallerUserProfile } from '../hooks/useUserProfile';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import React, { useState } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
+import { useSaveCallerUserProfile } from '../hooks/useUserProfile';
 
-interface ProfileSetupProps {
-  open: boolean;
-}
-
-export default function ProfileSetup({ open }: ProfileSetupProps) {
+export default function ProfileSetup() {
   const [name, setName] = useState('');
   const saveProfile = useSaveCallerUserProfile();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (name.trim()) {
-      saveProfile.mutate({ name: name.trim() });
+    
+    if (!name.trim()) {
+      return;
+    }
+
+    try {
+      await saveProfile.mutateAsync({ name: name.trim() });
+    } catch (error) {
+      console.error('Failed to save profile:', error);
     }
   };
 
   return (
-    <Dialog open={open}>
-      <DialogContent className="sm:max-w-md" onPointerDownOutside={(e) => e.preventDefault()}>
+    <Dialog open={true} onOpenChange={() => {}}>
+      <DialogContent className="sm:max-w-[425px]" onInteractOutside={(e) => e.preventDefault()}>
         <DialogHeader>
-          <DialogTitle className="font-serif text-2xl">Welcome to Media Tracker</DialogTitle>
+          <DialogTitle className="font-serif text-2xl">Welcome!</DialogTitle>
           <DialogDescription>
-            Please enter your name to get started tracking your favorite movies, TV shows, and video games.
+            Let's set up your profile. What should we call you?
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="name">Your Name</Label>
+            <Label htmlFor="name">Your Name *</Label>
             <Input
               id="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Enter your name"
-              autoFocus
+              placeholder="Enter your name..."
               required
+              disabled={saveProfile.isPending}
+              autoFocus
             />
           </div>
-          <Button 
-            type="submit" 
-            className="w-full" 
-            disabled={!name.trim() || saveProfile.isPending}
-          >
-            {saveProfile.isPending ? 'Saving...' : 'Continue'}
-          </Button>
+          <DialogFooter>
+            <Button type="submit" disabled={saveProfile.isPending || !name.trim()} className="w-full">
+              {saveProfile.isPending ? 'Saving...' : 'Continue'}
+            </Button>
+          </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>

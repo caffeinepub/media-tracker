@@ -57,11 +57,7 @@ export default function SharedMediaList() {
 
       <Separator />
 
-      <MediaList 
-        entries={entries} 
-        readOnly 
-        emptyMessage="This collection is empty"
-      />
+      <MediaList entries={entries} isPersonal={false} />
     </div>
   );
 }

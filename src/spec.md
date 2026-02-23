@@ -1,11 +1,13 @@
 # Specification
 
 ## Summary
-**Goal:** Add search and sort functionality to the media grid.
+**Goal:** Fix critical issues and verify functionality of the media tracker application.
 
 **Planned changes:**
-- Add a search input field above the media grid that filters media entries by title in real-time
-- Add a sort dropdown with options: Title (A-Z), Title (Z-A), Rating (Highest First), Rating (Lowest First), and Recently Added
-- Ensure search and sort work together (search filters, then sort orders the filtered results)
+- Investigate and resolve runtime errors, broken functionality, and visual issues
+- Verify search functionality filters media entries by title correctly
+- Verify sort functionality orders entries by title (A-Z/Z-A), rating (high/low), and recently added
+- Ensure all CRUD operations work as expected
+- Fix any console errors preventing proper application loading
 
-**User-visible outcome:** Users can search for media by title and sort the media grid by title, rating, or date added to quickly find and organize their media collection.
+**User-visible outcome:** Users can reliably interact with the media tracker without encountering errors, and search/sort features work correctly to organize their media entries.

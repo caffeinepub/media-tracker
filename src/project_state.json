@@ -1,43 +1,30 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Media browsing app with search and sort functionality",
+  "summary": "New project",
   "architectural_notes": [],
   "known_issues": [],
-  "isFixRequest": false,
+  "isFixRequest": true,
   "existing_features": [
     {
-      "id": "feature-add-a-search-input-field-above-the-media-grid-that-filters-media-entries-by-title-in-real-time-as-the-user-types",
-      "title": "Add a search input field above the media grid that filters media entries by title in real-time as the user types",
+      "id": "feature-investigate-and-resolve-any-runtime-errors-broken-functionality-or-visual-issues-currently-affecting-the-media-tracker-application",
+      "title": "Investigate and resolve any runtime errors, broken functionality, or visual issues currently affecting the media tracker application",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-add-a-sort-dropdown-that-allows-users-to-sort-media-entries-by-title-a-z-title-z-a-rating-highest-first-rating-lowest-first-and-recently-added",
-      "title": "Add a sort dropdown that allows users to sort media entries by: Title (A-Z), Title (Z-A), Rating (Highest First), Rating (Lowest First), and Recently Added",
+      "id": "feature-verify-that-the-recently-implemented-search-and-sort-features-are-working-correctly-across-all-media-entries",
+      "title": "Verify that the recently implemented search and sort features are working correctly across all media entries",
       "reqIds": [
         "REQ-2"
       ],
       "version": 1
     }
   ],
-  "new_feature_requests": [
-    {
-      "id": "AR-1",
-      "summary": "Add search functionality for media",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-2",
-      "summary": "Add sort options for media",
-      "reqIds": [],
-      "status": "pending"
-    }
-  ],
-  "projectName": "Add search and sort functionality for media entries",
+  "new_feature_requests": [],
+  "projectName": "Fix critical issues in media tracker",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

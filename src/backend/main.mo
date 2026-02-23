@@ -1,12 +1,10 @@
 import Map "mo:core/Map";
 import Nat64 "mo:core/Nat64";
-import List "mo:core/List";
 import Text "mo:core/Text";
 import Array "mo:core/Array";
 import Principal "mo:core/Principal";
 import Runtime "mo:core/Runtime";
 import Time "mo:core/Time";
-import Iter "mo:core/Iter";
 import Blob "mo:core/Blob";
 
 import MixinAuthorization "authorization/MixinAuthorization";
@@ -94,7 +92,6 @@ actor {
   };
 
   public query ({ caller }) func getMediaEntriesByUser(user : Principal) : async [MediaEntry] {
-    // Require at least user-level authentication
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only authenticated users can view media entries");
     };
@@ -105,12 +102,10 @@ actor {
       }
     );
 
-    // Owner can always view their own entries
     if (caller == user) {
       return filteredEntries;
     };
 
-    // Check if user has shared with caller
     switch (userShares.get(user)) {
       case (?sharedWithList) {
         if (sharedWithList.values().contains(caller)) {
@@ -120,7 +115,6 @@ actor {
       case (null) {};
     };
 
-    // Admins can view any entries
     if (AccessControl.isAdmin(accessControlState, caller)) {
       return filteredEntries;
     };
@@ -129,10 +123,8 @@ actor {
   };
 
   public query func getMediaEntriesByShareLink(shareLinkId : Nat64) : async [MediaEntry] {
-    // Share links allow anonymous access, but validate the link
     switch (shareLinks.get(shareLinkId)) {
       case (?link) {
-        // Check if link has expired
         switch (link.expiresAt) {
           case (?expiry) {
             if (Time.now() > expiry) {
@@ -142,7 +134,6 @@ actor {
           case (null) {};
         };
 
-        // Return entries owned by the link creator
         return mediaEntries.values().toArray().filter(
           func(entry) {
             entry.owner == link.owner;
@@ -158,7 +149,6 @@ actor {
       Runtime.trap("Unauthorized: Only users can grant access");
     };
 
-    // Prevent granting access to anonymous principal
     if (friend.isAnonymous()) {
       Runtime.trap("Cannot grant access to anonymous principal");
     };
@@ -197,7 +187,6 @@ actor {
       Runtime.trap("Unauthorized: Only users can generate share links");
     };
 
-    // Validate expiry time is in the future if provided
     switch (expiryTime) {
       case (?expiry) {
         if (expiry <= Time.now()) {

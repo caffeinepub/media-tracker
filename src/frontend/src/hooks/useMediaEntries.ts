@@ -1,15 +1,15 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useActor } from './useActor';
-import { MediaEntry, MediaType } from '../backend';
+import { MediaType } from '../backend';
 import { toast } from 'sonner';
 
 export function useGetMyMediaEntries() {
   const { actor, isFetching } = useActor();
 
-  return useQuery<MediaEntry[]>({
+  return useQuery({
     queryKey: ['myMediaEntries'],
     queryFn: async () => {
-      if (!actor) return [];
+      if (!actor) throw new Error('Actor not available');
       return actor.getMyMediaEntries();
     },
     enabled: !!actor && !isFetching,
@@ -21,21 +21,27 @@ export function useCreateMediaEntry() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: {
+    mutationFn: async ({
+      title,
+      mediaType,
+      rating,
+      review,
+    }: {
       title: string;
       mediaType: MediaType;
       rating: bigint | null;
       review: string | null;
     }) => {
       if (!actor) throw new Error('Actor not available');
-      return actor.createMediaEntry(data.title, data.mediaType, data.rating, data.review);
+      return actor.createMediaEntry(title, mediaType, rating, review);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['myMediaEntries'] });
-      toast.success('Entry added successfully!');
+      toast.success('Media entry created successfully');
     },
-    onError: (error) => {
-      toast.error(error instanceof Error ? error.message : 'Failed to create entry');
+    onError: (error: Error) => {
+      console.error('Failed to create media entry:', error);
+      toast.error('Failed to create media entry');
     },
   });
 }
@@ -45,7 +51,13 @@ export function useUpdateMediaEntry() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: {
+    mutationFn: async ({
+      id,
+      title,
+      mediaType,
+      rating,
+      review,
+    }: {
       id: bigint;
       title: string;
       mediaType: MediaType;
@@ -53,14 +65,15 @@ export function useUpdateMediaEntry() {
       review: string | null;
     }) => {
       if (!actor) throw new Error('Actor not available');
-      return actor.updateMediaEntry(data.id, data.title, data.mediaType, data.rating, data.review);
+      return actor.updateMediaEntry(id, title, mediaType, rating, review);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['myMediaEntries'] });
-      toast.success('Entry updated successfully!');
+      toast.success('Media entry updated successfully');
     },
-    onError: (error) => {
-      toast.error(error instanceof Error ? error.message : 'Failed to update entry');
+    onError: (error: Error) => {
+      console.error('Failed to update media entry:', error);
+      toast.error('Failed to update media entry');
     },
   });
 }
@@ -76,10 +89,11 @@ export function useDeleteMediaEntry() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['myMediaEntries'] });
-      toast.success('Entry deleted successfully!');
+      toast.success('Media entry deleted successfully');
     },
-    onError: (error) => {
-      toast.error(error instanceof Error ? error.message : 'Failed to delete entry');
+    onError: (error: Error) => {
+      console.error('Failed to delete media entry:', error);
+      toast.error('Failed to delete media entry');
     },
   });
 }

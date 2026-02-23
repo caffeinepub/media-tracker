@@ -1,58 +1,52 @@
 {
   "kind": "build_request",
-  "title": "Add search and sort functionality for media entries",
-  "priority": "normal",
+  "title": "Fix critical issues in media tracker",
+  "priority": "high",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Add a search input field above the media grid that filters media entries by title in real-time as the user types",
-      "target": "frontend",
+      "text": "Investigate and resolve any runtime errors, broken functionality, or visual issues currently affecting the media tracker application",
+      "target": "both",
       "source": {
         "messageIds": [
-          "msg-latest"
+          "msg-4"
         ],
         "quotes": [
-          "add an option to search media"
+          "fix it!!!!!!!!!!!!!!!!!!"
         ]
       },
       "acceptanceCriteria": [
-        "Search input appears above the media grid on the Dashboard page",
-        "Typing in the search field filters visible media entries by matching title text (case-insensitive)",
-        "Search results update in real-time as the user types",
-        "Empty search shows all media entries",
-        "Search preserves when switching between tabs or refreshing if applicable"
+        "All critical errors are identified and resolved",
+        "Application loads without console errors",
+        "All user interactions work as expected",
+        "Search, sort, and CRUD operations function correctly"
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Add a sort dropdown that allows users to sort media entries by: Title (A-Z), Title (Z-A), Rating (Highest First), Rating (Lowest First), and Recently Added",
+      "text": "Verify that the recently implemented search and sort features are working correctly across all media entries",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-latest"
-        ],
-        "quotes": [
-          "an option to sort"
+          "msg-4"
         ]
       },
       "acceptanceCriteria": [
-        "Sort dropdown appears above the media grid alongside the search input",
-        "Dropdown includes options: Title (A-Z), Title (Z-A), Rating (Highest First), Rating (Lowest First), Recently Added",
-        "Selected sort order immediately reorders the displayed media entries",
-        "Sort order persists when search filters are applied",
-        "Default sort order is Recently Added"
+        "Search filters media entries by title in real-time",
+        "Sort dropdown correctly orders entries by title A-Z/Z-A, rating high/low, and recently added",
+        "UI updates immediately when search or sort options change"
       ]
     }
   ],
   "constraints": [
-    "Do not modify the backend API or data models",
-    "Maintain the existing MediaCard and MediaList component structure",
-    "Search and sort must work together (search filters, then sort orders the filtered results)"
+    "Do not modify the core authentication flow or Internet Identity integration",
+    "Preserve existing data structures and backend schema",
+    "Maintain the current cinematic burgundy/gold/charcoal theme"
   ],
   "nonGoals": [
-    "Advanced search filters by media type or rating range",
-    "Backend-side search or sorting implementation",
-    "Saving user's search or sort preferences across sessions"
+    "Adding new features beyond bug fixes",
+    "Redesigning the UI",
+    "Adding filtering by genre or rating"
   ],
   "imageRequirements": {
     "required": [],

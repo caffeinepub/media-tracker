@@ -1,41 +1,68 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Add search and sort functionality for media entries",
+  "title": "Fix Critical Issues in Media Tracker",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Add a search input field above the media grid that filters media entries by title in real-time as the user types",
+      "summary": "Investigate and resolve runtime errors, broken functionality, and visual issues in the media tracker application",
       "acceptanceCriteria": [
-        "Search input appears above the media grid on the Dashboard page",
-        "Typing in the search field filters visible media entries by matching title text (case-insensitive)",
-        "Search results update in real-time as the user types",
-        "Empty search shows all media entries",
-        "Search preserves when switching between tabs or refreshing if applicable"
+        "All critical errors are identified and resolved",
+        "Application loads without console errors",
+        "All user interactions work as expected",
+        "Search, sort, and CRUD operations function correctly"
       ],
       "file_operations": [
         {
           "path": "frontend/src/pages/Dashboard.tsx",
           "operation": "modify",
-          "description": "Add state management for search query using useState. Add a search input field above the MediaList component using shadcn/ui Input component. Implement real-time filtering logic that filters the media entries array by checking if the search query (case-insensitive) is included in the media entry title. Pass the filtered entries to the MediaList component. Position the search input in a controls section above the media grid alongside the existing add media button."
+          "description": "Fix search and sort implementation to properly filter and order media entries. Ensure search filters by title case-insensitively in real-time. Verify sort options (title A-Z/Z-A, rating high/low, recently added) correctly order entries. Add proper error boundaries and null checks for edge cases. Ensure the hero banner image at frontend/public/assets/generated/hero-banner.dim_1200x400.png is referenced correctly in the Layout component usage."
+        },
+        {
+          "path": "frontend/src/components/MediaCard.tsx",
+          "operation": "modify",
+          "description": "Fix any null/undefined handling issues with optional fields (rating, review). Ensure edit and delete button click handlers work correctly. Verify owner comparison logic works properly with Principal types. Add defensive checks for missing data."
+        },
+        {
+          "path": "frontend/src/components/AddMediaForm.tsx",
+          "operation": "modify",
+          "description": "Fix form validation and submission logic. Ensure create and edit modes work correctly. Verify rating slider updates state properly. Fix any issues with form reset after submission. Ensure proper error handling for failed submissions."
+        },
+        {
+          "path": "frontend/src/components/MediaList.tsx",
+          "operation": "modify",
+          "description": "Fix grid rendering and empty state handling. Ensure MediaCard components receive correct props. Add proper key props for list items. Handle loading and error states gracefully."
+        },
+        {
+          "path": "frontend/src/hooks/useMediaEntries.ts",
+          "operation": "modify",
+          "description": "Fix query key management and cache invalidation. Ensure mutations properly update the UI after success. Verify toast notifications display correctly. Add proper error handling and retry logic."
+        },
+        {
+          "path": "frontend/src/components/ProfileSetup.tsx",
+          "operation": "modify",
+          "description": "Fix modal flash issue by properly checking profile loading and fetch states. Ensure the modal only displays when user is authenticated, profile is fully fetched, and no profile exists. Add proper validation for name input."
+        },
+        {
+          "path": "frontend/src/components/LoginButton.tsx",
+          "operation": "modify",
+          "description": "Fix login/logout flow and query cache clearing. Ensure proper error handling for authentication failures. Verify disabled state works correctly during login process."
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "Add a sort dropdown that allows users to sort media entries by: Title (A-Z), Title (Z-A), Rating (Highest First), Rating (Lowest First), and Recently Added",
+      "summary": "Verify that search and sort features work correctly across all media entries",
       "acceptanceCriteria": [
-        "Sort dropdown appears above the media grid alongside the search input",
-        "Dropdown includes options: Title (A-Z), Title (Z-A), Rating (Highest First), Rating (Lowest First), Recently Added",
-        "Selected sort order immediately reorders the displayed media entries",
-        "Sort order persists when search filters are applied",
-        "Default sort order is Recently Added"
+        "Search filters media entries by title in real-time",
+        "Sort dropdown correctly orders entries by title A-Z/Z-A, rating high/low, and recently added",
+        "UI updates immediately when search or sort options change"
       ],
       "file_operations": [
         {
           "path": "frontend/src/pages/Dashboard.tsx",
           "operation": "modify",
-          "description": "Add state management for selected sort option using useState with default value 'recently-added'. Add a shadcn/ui Select component next to the search input with options for: 'Title (A-Z)', 'Title (Z-A)', 'Rating (Highest First)', 'Rating (Lowest First)', and 'Recently Added'. Implement sorting logic that applies after search filtering: sort by title alphabetically (ascending/descending), by rating (descending/ascending, handling optional ratings by treating null as 0), or by dateAdded (descending for recently added). Ensure the sort is applied to the filtered results from REQ-1. Arrange search input and sort dropdown in a flex container above the MediaList component."
+          "description": "Ensure search input filters entries by title case-insensitively with proper debouncing or real-time updates. Verify sort dropdown applies correct sorting logic: title A-Z (ascending), title Z-A (descending), rating high to low (descending), rating low to high (ascending), and recently added (by dateAdded descending). Ensure filtered and sorted results display immediately when search term or sort option changes. Add visual feedback for active filters."
         }
       ]
     }

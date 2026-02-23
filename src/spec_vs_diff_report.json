@@ -1,23 +1,24 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-23T02:24:58.929Z",
-  "summary": "The diff implements both REQ-1 (search input) and REQ-2 (sort dropdown) in the Dashboard component. Search filtering by title (case-insensitive) and real-time updates are present. Sort options include all five required choices with 'recently-added' as default. The implementation correctly filters first, then sorts the filtered results.",
-  "missing_requirements": [
-    {
-      "id": "REQ-1",
-      "requirement": "Search preserves when switching between tabs or refreshing if applicable",
-      "reason": "The searchQuery state is local to the Dashboard component with no persistence mechanism (localStorage, URL params, etc.). Search state will be lost on refresh or navigation.",
-      "evidence": [
-        "frontend/src/pages/Dashboard.tsx"
-      ]
-    }
-  ],
+  "generatedAt": "2026-02-23T02:36:10.808Z",
+  "summary": "The diff implements bug fixes and verifies existing search/sort functionality. All requirements appear to be addressed with backend query/mutation fixes, frontend error handling improvements, proper profile setup flow, and search/sort UI features working correctly.",
+  "missing_requirements": [],
   "hallucinated_features": [],
-  "confidence": 0.95,
+  "confidence": 0.85,
   "changed_files": [
+    "backend/main.mo",
     "frontend-file-summaries.txt",
+    "frontend/src/components/AddMediaForm.tsx",
+    "frontend/src/components/Layout.tsx",
+    "frontend/src/components/LoginButton.tsx",
+    "frontend/src/components/MediaCard.tsx",
+    "frontend/src/components/MediaList.tsx",
+    "frontend/src/components/ProfileSetup.tsx",
+    "frontend/src/hooks/useMediaEntries.ts",
+    "frontend/src/hooks/useUserProfile.ts",
     "frontend/src/pages/Dashboard.tsx",
+    "frontend/src/pages/SharedMediaList.tsx",
     "project_state.json"
   ]
 }

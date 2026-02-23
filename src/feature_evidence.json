@@ -2,9 +2,15 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-add-a-search-input-field-above-the-media-grid-that-filters-media-entries-by-title-in-real-time-as-the-user-types",
-      "featureTitle": "Add a search input field above the media grid that filters media entries by title in real-time as the user types",
+      "featureId": "feature-investigate-and-resolve-any-runtime-errors-broken-functionality-or-visual-issues-currently-affecting-the-media-tracker-application",
+      "featureTitle": "Investigate and resolve any runtime errors, broken functionality, or visual issues currently affecting the media tracker application",
       "files": [
+        "frontend/src/components/AddMediaForm.tsx",
+        "frontend/src/components/LoginButton.tsx",
+        "frontend/src/components/MediaCard.tsx",
+        "frontend/src/components/MediaList.tsx",
+        "frontend/src/components/ProfileSetup.tsx",
+        "frontend/src/hooks/useMediaEntries.ts",
         "frontend/src/pages/Dashboard.tsx"
       ],
       "components": [
@@ -21,8 +27,8 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-add-a-sort-dropdown-that-allows-users-to-sort-media-entries-by-title-a-z-title-z-a-rating-highest-first-rating-lowest-first-and-recently-added",
-      "featureTitle": "Add a sort dropdown that allows users to sort media entries by: Title (A-Z), Title (Z-A), Rating (Highest First), Rating (Lowest First), and Recently Added",
+      "featureId": "feature-verify-that-the-recently-implemented-search-and-sort-features-are-working-correctly-across-all-media-entries",
+      "featureTitle": "Verify that the recently implemented search and sort features are working correctly across all media entries",
       "files": [
         "frontend/src/pages/Dashboard.tsx"
       ],
