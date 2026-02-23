@@ -118,6 +118,11 @@ export interface backendInterface {
     createMediaEntry(title: string, mediaType: MediaType, rating: bigint | null, review: string | null): Promise<bigint>;
     deleteMediaEntry(id: bigint): Promise<void>;
     generateShareLink(expiryTime: Time | null): Promise<bigint>;
+    /**
+     * / This functionality is implemented in the frontend. Motoko cannot directly access the file system.
+     * / Implemented as query to indicate large response to TypeScript (up to 2MB allowed)
+     */
+    getAllProjectFilesZipBlob(): Promise<Uint8Array>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
     getMediaEntriesByShareLink(shareLinkId: bigint): Promise<Array<MediaEntry>>;
@@ -201,6 +206,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.generateShareLink(to_candid_opt_n7(this._uploadFile, this._downloadFile, arg0));
+            return result;
+        }
+    }
+    async getAllProjectFilesZipBlob(): Promise<Uint8Array> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getAllProjectFilesZipBlob();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getAllProjectFilesZipBlob();
             return result;
         }
     }

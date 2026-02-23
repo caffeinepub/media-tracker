@@ -40,6 +40,7 @@ export const idlService = IDL.Service({
     ),
   'deleteMediaEntry' : IDL.Func([IDL.Nat64], [], []),
   'generateShareLink' : IDL.Func([IDL.Opt(Time)], [IDL.Nat64], []),
+  'getAllProjectFilesZipBlob' : IDL.Func([], [IDL.Vec(IDL.Nat8)], ['query']),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
   'getMediaEntriesByShareLink' : IDL.Func(
@@ -105,6 +106,7 @@ export const idlFactory = ({ IDL }) => {
       ),
     'deleteMediaEntry' : IDL.Func([IDL.Nat64], [], []),
     'generateShareLink' : IDL.Func([IDL.Opt(Time)], [IDL.Nat64], []),
+    'getAllProjectFilesZipBlob' : IDL.Func([], [IDL.Vec(IDL.Nat8)], ['query']),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
     'getMediaEntriesByShareLink' : IDL.Func(

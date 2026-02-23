@@ -1,5 +1,6 @@
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
 import LoginButton from './LoginButton';
+import ExportButton from './ExportButton';
 import { Film } from 'lucide-react';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -15,7 +16,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <Film className="w-8 h-8 text-gold" />
               <h1 className="text-2xl font-serif font-bold text-foreground">Media Tracker</h1>
             </div>
-            <LoginButton />
+            <div className="flex items-center gap-3">
+              {isAuthenticated && <ExportButton />}
+              <LoginButton />
+            </div>
           </div>
         </div>
         {isAuthenticated && (

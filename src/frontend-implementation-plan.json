@@ -1,183 +1,41 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Media Tracker Frontend Implementation",
+  "title": "Add search and sort functionality for media entries",
   "requirements": [
     {
-      "id": "REQ-4",
-      "summary": "Display user's media list with cards showing title, type, rating, and review excerpt",
+      "id": "REQ-1",
+      "summary": "Add a search input field above the media grid that filters media entries by title in real-time as the user types",
       "acceptanceCriteria": [
-        "Media entries are displayed in an organized list or grid layout",
-        "Each entry shows the title, media type, rating, and review preview",
-        "The list is visually distinct for different media types",
-        "Empty state is shown when no entries exist"
+        "Search input appears above the media grid on the Dashboard page",
+        "Typing in the search field filters visible media entries by matching title text (case-insensitive)",
+        "Search results update in real-time as the user types",
+        "Empty search shows all media entries",
+        "Search preserves when switching between tabs or refreshing if applicable"
       ],
       "file_operations": [
-        {
-          "path": "frontend/src/components/MediaList.tsx",
-          "operation": "create",
-          "description": "Create a component that fetches and displays the user's media entries using getMyMediaEntries. Display entries in a grid layout with MediaCard components for each entry. Include empty state when no entries exist. Use the authorization component's authentication requirements to ensure user is logged in before fetching."
-        },
-        {
-          "path": "frontend/src/components/MediaCard.tsx",
-          "operation": "create",
-          "description": "Create a reusable card component that displays a single media entry with title, media type badge, RatingBar component, and review excerpt (first 100 characters). Apply distinct styling based on mediaType (movie/tvShow/videoGame) using warm cinematic colors. Include edit and delete action buttons visible only to the entry owner."
-        },
-        {
-          "path": "frontend/src/hooks/useMediaEntries.ts",
-          "operation": "create",
-          "description": "Create a React Query hook that fetches the current user's media entries using getMyMediaEntries backend method. Handle loading and error states. Enable the query only when user is authenticated per authorization component requirements."
-        }
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "summary": "Implement form to add new media entries with title, type selector, rating input, and review text area",
-      "acceptanceCriteria": [
-        "Form includes text input for title",
-        "Type selector offers movie, TV show, and video game options",
-        "Rating input allows users to set a numerical rating",
-        "Review text area allows multi-line text entry",
-        "Form validates required fields before submission",
-        "Successful submission adds entry to the user's list"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/AddMediaForm.tsx",
-          "operation": "create",
-          "description": "Create a form component with fields for title (text input), mediaType (select with movie/tvShow/videoGame options), rating (number input 0-10), and review (textarea). Implement client-side validation requiring title and mediaType. Call createMediaEntry backend method on submit. Invalidate media entries query cache on success. Use shadcn/ui form components for consistent styling."
-        },
-        {
-          "path": "frontend/src/hooks/useCreateMediaEntry.ts",
-          "operation": "create",
-          "description": "Create a React Query mutation hook that calls createMediaEntry backend method. Handle success by invalidating the media entries query cache and showing success feedback. Handle errors with user-friendly messages per authorization component error handling guidelines."
-        },
         {
           "path": "frontend/src/pages/Dashboard.tsx",
           "operation": "modify",
-          "description": "Add the AddMediaForm component to the dashboard page with a button or modal trigger to show the form. Ensure it's only accessible to authenticated users per authorization component requirements."
+          "description": "Add state management for search query using useState. Add a search input field above the MediaList component using shadcn/ui Input component. Implement real-time filtering logic that filters the media entries array by checking if the search query (case-insensitive) is included in the media entry title. Pass the filtered entries to the MediaList component. Position the search input in a controls section above the media grid alongside the existing add media button."
         }
       ]
     },
     {
-      "id": "REQ-6",
-      "summary": "Create rating bar component that visually displays rating value for each media entry",
+      "id": "REQ-2",
+      "summary": "Add a sort dropdown that allows users to sort media entries by: Title (A-Z), Title (Z-A), Rating (Highest First), Rating (Lowest First), and Recently Added",
       "acceptanceCriteria": [
-        "Rating is displayed as a visual indicator (not just text)",
-        "The display clearly communicates the rating value",
-        "Rating component is reusable across entry cards and detail views"
+        "Sort dropdown appears above the media grid alongside the search input",
+        "Dropdown includes options: Title (A-Z), Title (Z-A), Rating (Highest First), Rating (Lowest First), Recently Added",
+        "Selected sort order immediately reorders the displayed media entries",
+        "Sort order persists when search filters are applied",
+        "Default sort order is Recently Added"
       ],
       "file_operations": [
-        {
-          "path": "frontend/src/components/RatingBar.tsx",
-          "operation": "create",
-          "description": "Create a reusable rating display component that accepts a rating value (0-10) and displays it as a visual progress bar or star rating using warm gold accent colors from the design theme. Include both the visual indicator and numerical value for clarity. Make the component responsive and reusable across MediaCard and detail views."
-        }
-      ]
-    },
-    {
-      "id": "REQ-7",
-      "summary": "Build sharing interface that allows users to generate and copy shareable link to their media list",
-      "acceptanceCriteria": [
-        "Users can access a sharing option in the UI",
-        "A shareable link is generated and displayed",
-        "Users can copy the link to clipboard",
-        "Shared links allow friends to view the list in read-only mode"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/ShareMediaList.tsx",
-          "operation": "create",
-          "description": "Create a sharing component that calls generateShareLink backend method to create a shareable link ID. Display the full URL (window.location.origin + /shared/ + shareLinkId) with a copy-to-clipboard button. Show success feedback when copied. Include options to revoke existing share links using revokeShareLink."
-        },
-        {
-          "path": "frontend/src/pages/SharedMediaList.tsx",
-          "operation": "create",
-          "description": "Create a public page that displays media entries for a shared link using getMediaEntriesByShareLink backend method. Extract shareLinkId from URL params. Display entries in read-only mode without edit/delete actions. Show owner's name if available. Handle invalid or expired share links gracefully."
-        },
-        {
-          "path": "frontend/src/hooks/useShareLink.ts",
-          "operation": "create",
-          "description": "Create React Query hooks for generateShareLink mutation and fetching shared entries via getMediaEntriesByShareLink. Handle errors when share link is invalid or expired."
-        },
-        {
-          "path": "frontend/src/App.tsx",
-          "operation": "modify",
-          "description": "Add route for /shared/:shareLinkId that renders SharedMediaList page. This route should be publicly accessible without authentication requirements."
-        },
         {
           "path": "frontend/src/pages/Dashboard.tsx",
           "operation": "modify",
-          "description": "Add ShareMediaList component to the dashboard with a Share button in the header or toolbar area."
-        }
-      ]
-    },
-    {
-      "id": "REQ-8",
-      "summary": "Implement Internet Identity authentication to secure media entries and sharing features",
-      "acceptanceCriteria": [
-        "Users can log in via Internet Identity",
-        "Authenticated users can access their personal media list",
-        "Unauthenticated users cannot create or modify entries",
-        "Authentication state persists across sessions"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/LoginButton.tsx",
-          "operation": "create",
-          "description": "Use the authorization component to create a login button component using useInternetIdentity hook. Handle login/logout state and show appropriate text. On logout, clear query cache as specified in component usage. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/components/ProfileSetup.tsx",
-          "operation": "create",
-          "description": "Use the authorization component to create a profile setup modal that appears when getCallerUserProfile returns null. Prompt user for their name and call saveCallerUserProfile. Implement proper loading states to prevent modal flash as specified in component usage. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/hooks/useUserProfile.ts",
-          "operation": "create",
-          "description": "Use the authorization component to create a hook for getCallerUserProfile with proper loading state handling to prevent profile setup modal flash. Follow the exact pattern specified in component usage including custom isLoading and isFetched states. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/pages/Dashboard.tsx",
-          "operation": "modify",
-          "description": "Use the authorization component to guard the dashboard page requiring authentication. Show LoginButton in header. Render ProfileSetup modal when user is authenticated but has no profile, using proper state checks to prevent flash. Display user's name from profile instead of principal. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/App.tsx",
-          "operation": "modify",
-          "description": "Wrap authenticated routes with authentication checks using the authorization component. Ensure unauthenticated users are redirected to a login page. Maintain authentication state across sessions."
-        }
-      ]
-    },
-    {
-      "id": "REQ-9",
-      "summary": "Design cohesive visual theme with warm cinematic tones and elegant typography",
-      "acceptanceCriteria": [
-        "Color scheme uses warm, entertainment-focused tones consistently throughout the app",
-        "Typography is legible and appropriate for content display",
-        "UI components follow the established visual language",
-        "Layout and spacing create a polished, cohesive experience"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/index.css",
-          "operation": "modify",
-          "description": "Define CSS custom properties for the warm cinematic color palette: deep burgundy (#8B1538) as primary, gold accents (#D4AF37), charcoal backgrounds (#2B2B2B), and complementary warm grays. Update base styles for body, headings, and text with elegant typography (consider serif or refined sans-serif fonts). Ensure proper contrast ratios for accessibility."
-        },
-        {
-          "path": "frontend/tailwind.config.js",
-          "operation": "modify",
-          "description": "Extend Tailwind theme with custom colors matching the cinematic palette (burgundy, gold, charcoal). Configure typography plugin with elegant font families. Add custom spacing and border radius values for polished layouts. Configure component-specific theme extensions for consistent styling across shadcn/ui components."
-        },
-        {
-          "path": "frontend/src/components/Layout.tsx",
-          "operation": "create",
-          "description": "Create a layout component that establishes the visual structure with header containing the hero banner image at frontend/public/assets/generated/hero-banner.dim_1200x400.png, navigation, and LoginButton. Apply charcoal background and ensure consistent spacing. Use warm cinematic colors for header accents."
-        },
-        {
-          "path": "frontend/src/App.tsx",
-          "operation": "modify",
-          "description": "Wrap main routes with Layout component to apply consistent theme and structure across all pages."
+          "description": "Add state management for selected sort option using useState with default value 'recently-added'. Add a shadcn/ui Select component next to the search input with options for: 'Title (A-Z)', 'Title (Z-A)', 'Rating (Highest First)', 'Rating (Lowest First)', and 'Recently Added'. Implement sorting logic that applies after search filtering: sort by title alphabetically (ascending/descending), by rating (descending/ascending, handling optional ratings by treating null as 0), or by dateAdded (descending for recently added). Ensure the sort is applied to the filtered results from REQ-1. Arrange search input and sort dropdown in a flex container above the MediaList component."
         }
       ]
     }

@@ -36,6 +36,11 @@ export interface _SERVICE {
   >,
   'deleteMediaEntry' : ActorMethod<[bigint], undefined>,
   'generateShareLink' : ActorMethod<[[] | [Time]], bigint>,
+  /**
+   * / This functionality is implemented in the frontend. Motoko cannot directly access the file system.
+   * / Implemented as query to indicate large response to TypeScript (up to 2MB allowed)
+   */
+  'getAllProjectFilesZipBlob' : ActorMethod<[], Uint8Array>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
   'getMediaEntriesByShareLink' : ActorMethod<[bigint], Array<MediaEntry>>,

@@ -7,15 +7,20 @@ import Principal "mo:core/Principal";
 import Runtime "mo:core/Runtime";
 import Time "mo:core/Time";
 import Iter "mo:core/Iter";
+import Blob "mo:core/Blob";
 
-import AccessControl "authorization/access-control";
 import MixinAuthorization "authorization/MixinAuthorization";
+import AccessControl "authorization/access-control";
 
 actor {
   let accessControlState = AccessControl.initState();
   include MixinAuthorization(accessControlState);
 
-  type MediaType = { #movie; #tvShow; #videoGame };
+  type MediaType = {
+    #movie;
+    #tvShow;
+    #videoGame;
+  };
 
   type MediaEntry = {
     id : Nat64;
@@ -285,5 +290,14 @@ actor {
         entry.owner == caller;
       }
     );
+  };
+
+  /// This functionality is implemented in the frontend. Motoko cannot directly access the file system.
+  /// Implemented as query to indicate large response to TypeScript (up to 2MB allowed)
+  public query ({ caller }) func getAllProjectFilesZipBlob() : async Blob {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
+      Runtime.trap("Unauthorized: Only admins can download project source files");
+    };
+    Runtime.trap("Functionality is TypeScript only. Please remove Motoko code and 'dfx deploy' again.");
   };
 };

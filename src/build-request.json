@@ -1,203 +1,61 @@
 {
   "kind": "build_request",
-  "title": "Create media tracking app with ratings, reviews, and sharing",
-  "projectName": "Media Tracker",
+  "title": "Add search and sort functionality for media entries",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Create a backend data model to store media entries with fields for title, type (movie, TV show, or video game), rating (numerical score), review text, date added, and user owner",
-      "target": "backend",
+      "text": "Add a search input field above the media grid that filters media entries by title in real-time as the user types",
+      "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-2"
+          "msg-latest"
         ],
         "quotes": [
-          "track movies, tv shows and video games watched",
-          "rating bar per title",
-          "small review"
+          "add an option to search media"
         ]
       },
       "acceptanceCriteria": [
-        "Media entries can be created with all required fields",
-        "Type field accepts only movie, TV show, or video game",
-        "Rating field accepts numerical values",
-        "Review field accepts text input",
-        "Each entry is associated with the user who created it"
+        "Search input appears above the media grid on the Dashboard page",
+        "Typing in the search field filters visible media entries by matching title text (case-insensitive)",
+        "Search results update in real-time as the user types",
+        "Empty search shows all media entries",
+        "Search preserves when switching between tabs or refreshing if applicable"
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Implement backend methods to create, read, update, and delete media entries for authenticated users",
-      "target": "backend",
-      "source": {
-        "messageIds": [
-          "msg-2"
-        ],
-        "quotes": [
-          "track movies, tv shows and video games watched"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Users can add new media entries",
-        "Users can view their own media entries",
-        "Users can edit their existing entries",
-        "Users can delete their entries",
-        "All operations require user authentication"
-      ]
-    },
-    {
-      "id": "REQ-3",
-      "text": "Create a backend sharing system that allows users to generate shareable links or grant access to their media lists for specific friends",
-      "target": "backend",
-      "source": {
-        "messageIds": [
-          "msg-2"
-        ],
-        "quotes": [
-          "share it with my friends"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Users can generate shareable access for their media list",
-        "Shared lists are viewable by friends with appropriate permissions",
-        "Users can revoke sharing access",
-        "Shared lists display the owner's entries in read-only mode"
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "text": "Build a frontend interface to display the user's media list with cards or rows showing title, type, rating, and review excerpt for each entry",
+      "text": "Add a sort dropdown that allows users to sort media entries by: Title (A-Z), Title (Z-A), Rating (Highest First), Rating (Lowest First), and Recently Added",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-2"
+          "msg-latest"
         ],
         "quotes": [
-          "track movies, tv shows and video games watched",
-          "rating bar per title",
-          "small review"
+          "an option to sort"
         ]
       },
       "acceptanceCriteria": [
-        "Media entries are displayed in an organized list or grid layout",
-        "Each entry shows the title, media type, rating, and review preview",
-        "The list is visually distinct for different media types",
-        "Empty state is shown when no entries exist"
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "text": "Implement a frontend form to add new media entries with fields for title, type selector (movie/TV show/video game), rating input, and review text area",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-2"
-        ],
-        "quotes": [
-          "track movies, tv shows and video games watched",
-          "rating bar per title",
-          "small review"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Form includes text input for title",
-        "Type selector offers movie, TV show, and video game options",
-        "Rating input allows users to set a numerical rating",
-        "Review text area allows multi-line text entry",
-        "Form validates required fields before submission",
-        "Successful submission adds entry to the user's list"
-      ]
-    },
-    {
-      "id": "REQ-6",
-      "text": "Create a rating bar component that visually displays the rating value for each media entry (e.g., stars, progress bar, or numerical indicator)",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-2"
-        ],
-        "quotes": [
-          "rating bar per title"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Rating is displayed as a visual indicator (not just text)",
-        "The display clearly communicates the rating value",
-        "Rating component is reusable across entry cards and detail views"
-      ]
-    },
-    {
-      "id": "REQ-7",
-      "text": "Build a sharing interface that allows users to generate and copy a shareable link to their media list",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-2"
-        ],
-        "quotes": [
-          "share it with my friends"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Users can access a sharing option in the UI",
-        "A shareable link is generated and displayed",
-        "Users can copy the link to clipboard",
-        "Shared links allow friends to view the list in read-only mode"
-      ]
-    },
-    {
-      "id": "REQ-8",
-      "text": "Implement user authentication using Internet Identity to secure media entries and sharing features",
-      "target": "both",
-      "source": {
-        "messageIds": [
-          "msg-2"
-        ],
-        "quotes": [
-          "share it with my friends"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Users can log in via Internet Identity",
-        "Authenticated users can access their personal media list",
-        "Unauthenticated users cannot create or modify entries",
-        "Authentication state persists across sessions"
-      ]
-    },
-    {
-      "id": "REQ-9",
-      "text": "Design a cohesive visual theme with warm, cinematic tones (deep burgundy, gold accents, charcoal backgrounds) and elegant typography that evokes entertainment and media consumption",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-2"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Color scheme uses warm, entertainment-focused tones consistently throughout the app",
-        "Typography is legible and appropriate for content display",
-        "UI components follow the established visual language",
-        "Layout and spacing create a polished, cohesive experience"
+        "Sort dropdown appears above the media grid alongside the search input",
+        "Dropdown includes options: Title (A-Z), Title (Z-A), Rating (Highest First), Rating (Lowest First), Recently Added",
+        "Selected sort order immediately reorders the displayed media entries",
+        "Sort order persists when search filters are applied",
+        "Default sort order is Recently Added"
       ]
     }
   ],
   "constraints": [
-    "Use Internet Identity for authentication",
-    "All media entries must be associated with authenticated users",
-    "Shared lists must be read-only for viewers"
+    "Do not modify the backend API or data models",
+    "Maintain the existing MediaCard and MediaList component structure",
+    "Search and sort must work together (search filters, then sort orders the filtered results)"
   ],
   "nonGoals": [
-    "Integration with external movie/game databases or APIs",
-    "Social features beyond simple list sharing (likes, comments, followers)",
-    "Advanced search or filtering by genre, year, or other metadata",
-    "Recommendation algorithms or personalized suggestions",
-    "Mobile-specific native features"
+    "Advanced search filters by media type or rating range",
+    "Backend-side search or sorting implementation",
+    "Saving user's search or sort preferences across sessions"
   ],
   "imageRequirements": {
-    "required": [
-      "Cinematic hero banner with film reel and game controller motifs in warm burgundy and gold tones (hero-banner.dim_1200x400.png)"
-    ],
+    "required": [],
     "edits": []
   }
 }

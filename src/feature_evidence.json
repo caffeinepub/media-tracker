@@ -2,31 +2,9 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-build-a-frontend-interface-to-display-the-user-s-media-list-with-cards-or-rows-showing-title-type-rating-and-review-excerpt-for-each-entry",
-      "featureTitle": "Build a frontend interface to display the user's media list with cards or rows showing title, type, rating, and review excerpt for each entry",
+      "featureId": "feature-add-a-search-input-field-above-the-media-grid-that-filters-media-entries-by-title-in-real-time-as-the-user-types",
+      "featureTitle": "Add a search input field above the media grid that filters media entries by title in real-time as the user types",
       "files": [
-        "frontend/src/components/MediaCard.tsx",
-        "frontend/src/components/MediaList.tsx",
-        "frontend/src/hooks/useMediaEntries.ts"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-4"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-implement-a-frontend-form-to-add-new-media-entries-with-fields-for-title-type-selector-movie-tv-show-video-game-rating-input-and-review-text-area",
-      "featureTitle": "Implement a frontend form to add new media entries with fields for title, type selector (movie/TV show/video game), rating input, and review text area",
-      "files": [
-        "frontend/src/components/AddMediaForm.tsx",
         "frontend/src/pages/Dashboard.tsx"
       ],
       "components": [
@@ -38,60 +16,14 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-5"
+        "REQ-1"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-create-a-rating-bar-component-that-visually-displays-the-rating-value-for-each-media-entry-e-g-stars-progress-bar-or-numerical-indicator",
-      "featureTitle": "Create a rating bar component that visually displays the rating value for each media entry (e.g., stars, progress bar, or numerical indicator)",
+      "featureId": "feature-add-a-sort-dropdown-that-allows-users-to-sort-media-entries-by-title-a-z-title-z-a-rating-highest-first-rating-lowest-first-and-recently-added",
+      "featureTitle": "Add a sort dropdown that allows users to sort media entries by: Title (A-Z), Title (Z-A), Rating (Highest First), Rating (Lowest First), and Recently Added",
       "files": [
-        "frontend/src/components/RatingBar.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-6"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-build-a-sharing-interface-that-allows-users-to-generate-and-copy-a-shareable-link-to-their-media-list",
-      "featureTitle": "Build a sharing interface that allows users to generate and copy a shareable link to their media list",
-      "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/components/ShareMediaList.tsx",
-        "frontend/src/hooks/useShareLink.ts",
-        "frontend/src/pages/Dashboard.tsx",
-        "frontend/src/pages/SharedMediaList.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-7"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-implement-user-authentication-using-internet-identity-to-secure-media-entries-and-sharing-features",
-      "featureTitle": "Implement user authentication using Internet Identity to secure media entries and sharing features",
-      "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/components/LoginButton.tsx",
-        "frontend/src/components/ProfileSetup.tsx",
-        "frontend/src/hooks/useUserProfile.ts",
         "frontend/src/pages/Dashboard.tsx"
       ],
       "components": [
@@ -103,29 +35,7 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-8"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-design-a-cohesive-visual-theme-with-warm-cinematic-tones-deep-burgundy-gold-accents-charcoal-backgrounds-and-elegant-typography-that-evokes-entertainment-and-media-consumption",
-      "featureTitle": "Design a cohesive visual theme with warm, cinematic tones (deep burgundy, gold accents, charcoal backgrounds) and elegant typography that evokes entertainment and media consumption",
-      "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/components/Layout.tsx",
-        "frontend/src/index.css",
-        "frontend/tailwind.config.js"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-9"
+        "REQ-2"
       ],
       "confidence": "high"
     }

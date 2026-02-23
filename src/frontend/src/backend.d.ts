@@ -35,6 +35,11 @@ export interface backendInterface {
     createMediaEntry(title: string, mediaType: MediaType, rating: bigint | null, review: string | null): Promise<bigint>;
     deleteMediaEntry(id: bigint): Promise<void>;
     generateShareLink(expiryTime: Time | null): Promise<bigint>;
+    /**
+     * / This functionality is implemented in the frontend. Motoko cannot directly access the file system.
+     * / Implemented as query to indicate large response to TypeScript (up to 2MB allowed)
+     */
+    getAllProjectFilesZipBlob(): Promise<Uint8Array>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
     getMediaEntriesByShareLink(shareLinkId: bigint): Promise<Array<MediaEntry>>;

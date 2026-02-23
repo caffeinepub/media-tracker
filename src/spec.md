@@ -1,17 +1,11 @@
 # Specification
 
 ## Summary
-**Goal:** Build a media tracking application where users can log movies, TV shows, and video games with ratings and reviews, and share their lists with friends.
+**Goal:** Add search and sort functionality to the media grid.
 
 **Planned changes:**
-- Implement backend data model for media entries (title, type, rating, review, date, owner)
-- Create CRUD operations for media entries with user authentication
-- Build sharing system to generate shareable links for read-only list access
-- Design frontend interface displaying media list with cards showing title, type, rating, and review
-- Create add/edit form with type selector, rating input, and review text area
-- Implement visual rating bar component for each entry
-- Add sharing UI to generate and copy shareable links
-- Integrate Internet Identity for user authentication
-- Apply warm cinematic visual theme with burgundy, gold, and charcoal color palette
+- Add a search input field above the media grid that filters media entries by title in real-time
+- Add a sort dropdown with options: Title (A-Z), Title (Z-A), Rating (Highest First), Rating (Lowest First), and Recently Added
+- Ensure search and sort work together (search filters, then sort orders the filtered results)
 
-**User-visible outcome:** Users can log in with Internet Identity, track their watched movies/shows/games with ratings and reviews, view their collection in an elegant interface with visual rating indicators, and share their list via link with friends who can view it in read-only mode.
+**User-visible outcome:** Users can search for media by title and sort the media grid by title, rating, or date added to quickly find and organize their media collection.
