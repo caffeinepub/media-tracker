@@ -11,6 +11,9 @@ import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
 export interface EmojiReaction { 'count' : bigint, 'emoji' : string }
+export type ExternalBlob = Uint8Array;
+export type Image = { 'embedded' : Uint8Array } |
+  { 'external' : ExternalBlob };
 export interface MediaEntry {
   'id' : bigint,
   'review' : [] | [string],
@@ -18,6 +21,7 @@ export interface MediaEntry {
   'owner' : Principal,
   'mediaType' : MediaType,
   'rating' : [] | [bigint],
+  'image' : [] | [Image],
   'dateAdded' : Time,
 }
 export type MediaType = { 'movie' : null } |
@@ -28,40 +32,57 @@ export interface UserProfile { 'name' : string }
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
   { 'guest' : null };
+export interface _CaffeineStorageCreateCertificateResult {
+  'method' : string,
+  'blob_hash' : string,
+}
+export interface _CaffeineStorageRefillInformation {
+  'proposed_top_up_amount' : [] | [bigint],
+}
+export interface _CaffeineStorageRefillResult {
+  'success' : [] | [boolean],
+  'topped_up_amount' : [] | [bigint],
+}
 export interface _SERVICE {
+  '_caffeineStorageBlobIsLive' : ActorMethod<[Uint8Array], boolean>,
+  '_caffeineStorageBlobsToDelete' : ActorMethod<[], Array<Uint8Array>>,
+  '_caffeineStorageConfirmBlobDeletion' : ActorMethod<
+    [Array<Uint8Array>],
+    undefined
+  >,
+  '_caffeineStorageCreateCertificate' : ActorMethod<
+    [string],
+    _CaffeineStorageCreateCertificateResult
+  >,
+  '_caffeineStorageRefillCashier' : ActorMethod<
+    [[] | [_CaffeineStorageRefillInformation]],
+    _CaffeineStorageRefillResult
+  >,
+  '_caffeineStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
+  'addImageToMediaEntry' : ActorMethod<
+    [string, bigint, ExternalBlob],
+    undefined
+  >,
   'addReaction' : ActorMethod<[bigint, string], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
   'createMediaEntry' : ActorMethod<
     [string, MediaType, [] | [bigint], [] | [string]],
     bigint
   >,
-  'deleteMediaEntry' : ActorMethod<[bigint], undefined>,
-  'generateShareLink' : ActorMethod<[[] | [Time]], bigint>,
-  /**
-   * / This functionality is implemented in the frontend. Motoko cannot directly access the file system.
-   * / Implemented as query to indicate large response to TypeScript (up to 2MB allowed)
-   */
-  'getAllProjectFilesZipBlob' : ActorMethod<[], Uint8Array>,
+  'getAllOfficialRecommendations' : ActorMethod<[], Array<MediaEntry>>,
   'getAllReviews' : ActorMethod<[], Array<MediaEntry>>,
+  'getBannerPhoto' : ActorMethod<[], [] | [ExternalBlob]>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
   'getMediaEntriesByShareLink' : ActorMethod<[bigint], Array<MediaEntry>>,
   'getMediaEntriesByUser' : ActorMethod<[Principal], Array<MediaEntry>>,
-  'getMyMediaEntries' : ActorMethod<[], Array<MediaEntry>>,
   'getReactionCounts' : ActorMethod<[bigint], Array<EmojiReaction>>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
-  'grantAccessToUser' : ActorMethod<[Principal], undefined>,
-  'hasUserReacted' : ActorMethod<[bigint, string], boolean>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
   'removeReaction' : ActorMethod<[bigint, string], undefined>,
-  'revokeAccessFromUser' : ActorMethod<[Principal], undefined>,
-  'revokeShareLink' : ActorMethod<[bigint], undefined>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
-  'updateMediaEntry' : ActorMethod<
-    [bigint, string, MediaType, [] | [bigint], [] | [string]],
-    undefined
-  >,
+  'setBannerPhoto' : ActorMethod<[ExternalBlob], undefined>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

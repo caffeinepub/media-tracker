@@ -15,7 +15,7 @@ interface CommunityReviewCardProps {
 
 export default function CommunityReviewCard({ entry }: CommunityReviewCardProps) {
   const { data: reviewerProfile } = useGetUserProfile(entry.owner);
-  const { imageUrl, isLoading: imageLoading } = useMediaImage(entry.title, entry.mediaType);
+  const { imageUrl, isLoading: imageLoading } = useMediaImage(entry);
   const [isExpanded, setIsExpanded] = useState(false);
 
   const getMediaTypeBadge = (type: string) => {
@@ -56,6 +56,20 @@ export default function CommunityReviewCard({ entry }: CommunityReviewCardProps)
             alt={entry.title}
             loading="lazy"
             className="w-full h-full object-cover"
+            onError={(e) => {
+              // Fallback if image fails to load
+              const target = e.target as HTMLImageElement;
+              target.style.display = 'none';
+              if (target.parentElement) {
+                target.parentElement.innerHTML = `
+                  <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-accent/20">
+                    <span class="text-4xl font-serif text-muted-foreground/50">
+                      ${entry.title.charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                `;
+              }
+            }}
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-accent/20">

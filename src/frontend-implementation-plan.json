@@ -1,137 +1,85 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Add Community Reviews social feed page with reactions",
+  "title": "Fix photo upload error, rename app to Mofongo Tracker, and add banner photo customization",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Create Community Reviews page at /community displaying all users' reviews in a unified feed",
+      "summary": "Fix the error that occurs after uploading photos in the media entry form to ensure images are properly stored and displayed without errors",
       "acceptanceCriteria": [
-        "New route /community is accessible",
-        "Page displays reviews from all users in chronological order",
-        "No links to user profiles or individual collections are present"
+        "Users can upload photos to media entries without encountering errors",
+        "Uploaded photos are successfully stored in the backend",
+        "Uploaded photos display correctly in MediaCard and CommunityReviewCard components",
+        "No console errors or failed network requests after photo upload"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/CommunityReviews.tsx",
-          "operation": "create",
-          "description": "Create a new page component that fetches all reviews using the getAllReviews backend method and displays them in a chronological feed. The page should use the authorization component to ensure users are logged in before viewing community content. Verify the component's usage instructions before implementing."
+          "path": "frontend/src/components/AddMediaForm.tsx",
+          "operation": "modify",
+          "description": "Fix image upload handling in the form submission. Ensure the image upload mutation completes successfully before attempting to create the media entry. Update error handling to catch and display any upload failures. Verify the ExternalBlob is properly constructed from the file data before passing to the backend."
         },
         {
-          "path": "frontend/src/App.tsx",
+          "path": "frontend/src/hooks/useMediaEntries.ts",
           "operation": "modify",
-          "description": "Register the /community route in the TanStack Router configuration to wire the new CommunityReviews page into the application navigation system."
+          "description": "Fix the addImageToMediaEntry mutation to properly handle the ExternalBlob upload with progress tracking. Ensure the mutation invalidates the correct query keys after successful upload so the UI updates with the new image."
+        },
+        {
+          "path": "frontend/src/components/MediaCard.tsx",
+          "operation": "modify",
+          "description": "Verify image display logic handles external blob URLs correctly. Ensure the component properly renders images from ExternalBlob sources returned by the backend."
+        },
+        {
+          "path": "frontend/src/components/CommunityReviewCard.tsx",
+          "operation": "modify",
+          "description": "Verify image display logic handles external blob URLs correctly. Ensure the component properly renders images from ExternalBlob sources returned by the backend."
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "Add Community Reviews navigation link in header",
+      "summary": "Rename the application from 'Media Tracker' to 'Mofongo Tracker' in all user-facing locations",
       "acceptanceCriteria": [
-        "Navigation link appears in the header alongside existing navigation",
-        "Clicking the link navigates to /community route"
+        "The browser tab title displays 'Mofongo Tracker'",
+        "The header logo area shows 'Mofongo Tracker'",
+        "All references to 'Media Tracker' in the UI are updated to 'Mofongo Tracker'"
       ],
       "file_operations": [
         {
+          "path": "frontend/index.html",
+          "operation": "modify",
+          "description": "Update the <title> tag from 'Media Tracker' to 'Mofongo Tracker'."
+        },
+        {
           "path": "frontend/src/components/Layout.tsx",
           "operation": "modify",
-          "description": "Add a 'Community Reviews' navigation link in the header section that routes to /community, positioned alongside the existing logo and action buttons. Ensure the link is visible to authenticated users."
+          "description": "Update the header logo text from 'Media Tracker' to 'Mofongo Tracker'. Search for any other references to 'Media Tracker' in the component and replace them with 'Mofongo Tracker'."
         }
       ]
     },
     {
       "id": "REQ-3",
-      "summary": "Style Community Reviews page with existing dark theme and cinematic aesthetic",
+      "summary": "Add functionality for any user to change the banner photo that is displayed globally for all users in the Layout component header area",
       "acceptanceCriteria": [
-        "Page uses the same dark background colors and warm cinematic palette",
-        "Typography matches existing pages (Inter and Playfair Display fonts)",
-        "Card spacing and rounded corners match MediaCard component",
-        "Hover effects are consistent with existing collection cards"
+        "A UI control is added (e.g., button or admin panel option) that allows users to upload a new banner image",
+        "The uploaded banner image is stored in the backend and persists across sessions",
+        "When a user changes the banner, it updates immediately for all users viewing the application",
+        "The banner image displays correctly in the Layout component's hero section"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/CommunityReviews.tsx",
+          "path": "frontend/src/hooks/useBannerPhoto.ts",
+          "operation": "create",
+          "description": "Create a new hook file that provides React Query hooks for banner photo operations. Include useGetBannerPhoto to fetch the current banner using getBannerPhoto backend method, and useSetBannerPhoto mutation to upload a new banner using setBannerPhoto backend method. The mutation should accept an ExternalBlob parameter and invalidate the banner query on success. Use the blob-storage component's ExternalBlob class to handle file uploads with progress tracking."
+        },
+        {
+          "path": "frontend/src/components/BannerPhotoUpload.tsx",
+          "operation": "create",
+          "description": "Create a dialog component for uploading a new banner photo. Include a file input that accepts images, shows a preview of the selected image, displays upload progress, and calls the useSetBannerPhoto mutation on submit. Add validation for file type (images only) and size (2MB limit). Show toast notifications on success or error. Use the blob-storage component to construct ExternalBlob from file data and track upload progress. Verify the component's usage instructions for ExternalBlob before implementing."
+        },
+        {
+          "path": "frontend/src/components/Layout.tsx",
           "operation": "modify",
-          "description": "Apply Tailwind CSS classes that match the existing dark theme from index.css and tailwind.config.js, using the same OKLCH color system with burgundy and gold tones. Reference MediaCard component styling for consistent card appearance including rounded corners, spacing, and hover effects. Use Playfair Display for headings and Inter for body text."
-        }
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "summary": "Display review cards with media title, type badge, rating, review text, reviewer name, and date",
-      "acceptanceCriteria": [
-        "Each review card shows the media title prominently",
-        "Media type badge displays the correct type with matching styling to existing badges",
-        "RatingBar component renders the rating value",
-        "Review text is displayed in full or with expansion capability",
-        "Reviewer name appears in muted/subtle text styling",
-        "Date posted is formatted and displayed clearly"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/CommunityReviewCard.tsx",
-          "operation": "create",
-          "description": "Create a new component that displays a single review card with all required fields. Use the existing RatingBar component without modification to display ratings. Map MediaEntry.mediaType enum values to display badges matching the style in MediaCard. Format the dateAdded timestamp and display the reviewer name using a hook that fetches the user profile. Include logic to show full or truncated review text with expand/collapse functionality if needed."
-        },
-        {
-          "path": "frontend/src/hooks/useReviewerProfile.ts",
-          "operation": "create",
-          "description": "Create a hook that fetches a user's profile by Principal using the getUserProfile backend method. This hook will be used to display reviewer names in the community feed. Return the profile name or a fallback display value."
-        },
-        {
-          "path": "frontend/src/pages/CommunityReviews.tsx",
-          "operation": "modify",
-          "description": "Import and render CommunityReviewCard components for each review in the feed, passing the MediaEntry data and ensuring proper grid layout with appropriate spacing."
-        }
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "summary": "Fetch and display media images with lazy loading and themed placeholders",
-      "acceptanceCriteria": [
-        "Images are fetched based on media title",
-        "Images appear at the top of each review card",
-        "All images maintain consistent aspect ratio across cards",
-        "Placeholder image matching the app theme displays when fetch fails",
-        "Images use lazy loading to improve initial page load performance"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/hooks/useMediaImage.ts",
-          "operation": "create",
-          "description": "Create a hook that fetches media images based on the media title using an external API (e.g., TMDB, IGDB, or a generic image search service). Implement error handling to return a themed placeholder image path when the fetch fails. Use React Query for caching and stale-while-revalidate behavior."
-        },
-        {
-          "path": "frontend/src/components/CommunityReviewCard.tsx",
-          "operation": "modify",
-          "description": "Integrate the useMediaImage hook to fetch and display images at the top of each card. Use native lazy loading (loading='lazy' attribute) for performance. Apply consistent aspect ratio styling (e.g., 16:9 or 3:4) using Tailwind aspect-ratio utilities. Display a themed placeholder div with background color from the existing palette when no image is available."
-        }
-      ]
-    },
-    {
-      "id": "REQ-6",
-      "summary": "Implement emoji reaction bar with dynamic count updates",
-      "acceptanceCriteria": [
-        "Reaction bar displays all six emoji options below each review",
-        "Clicking an emoji increments its count immediately without refresh",
-        "Visual feedback indicates which reactions the current user has selected",
-        "Counts update in real-time when reactions are added"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/ReactionBar.tsx",
-          "operation": "create",
-          "description": "Create a component that displays six emoji buttons (👍 ❤️ 😂 😮 😢 🔥) with counts. Use the getReactionCounts and hasUserReacted backend methods to fetch initial state. Implement optimistic updates that immediately reflect count changes when a user clicks an emoji, then call addReaction or removeReaction backend methods. Use visual styling to highlight emojis the current user has reacted with. Use the authorization component to ensure only authenticated users can react. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/hooks/useReactions.ts",
-          "operation": "create",
-          "description": "Create hooks for managing reactions including fetching reaction counts per review, checking if the current user has reacted, and mutations for adding/removing reactions. Use TanStack Query with optimistic updates and proper cache invalidation. Handle the authorization component's requirements for authenticated operations. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/components/CommunityReviewCard.tsx",
-          "operation": "modify",
-          "description": "Import and render the ReactionBar component at the bottom of each review card, passing the review ID as a prop."
+          "description": "Update the hero banner section to display the banner photo from the backend. Use the useGetBannerPhoto hook to fetch the current banner URL. If a banner exists, display it using ExternalBlob.getDirectURL() to leverage streaming and caching. Add a button or icon in the header area that opens the BannerPhotoUpload dialog when clicked. Use the existing generated banner image at frontend/public/assets/generated/hero-banner.dim_1200x400.png as the fallback when no custom banner is set."
         }
       ]
     }

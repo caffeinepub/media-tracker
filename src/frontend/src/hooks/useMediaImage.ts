@@ -1,23 +1,33 @@
 import { useQuery } from '@tanstack/react-query';
-
-const TMDB_API_KEY = 'demo'; // Using demo mode for placeholder images
-const UNSPLASH_ACCESS_KEY = 'demo'; // Using demo mode
+import type { MediaEntry, Image } from '../backend';
+import { ExternalBlob } from '../backend';
 
 interface MediaImageResult {
   imageUrl: string | null;
   isLoading: boolean;
 }
 
-export function useMediaImage(title: string, mediaType: string): MediaImageResult {
+export function useMediaImage(entry: MediaEntry): MediaImageResult {
   const { data: imageUrl, isLoading } = useQuery<string | null>({
-    queryKey: ['mediaImage', title, mediaType],
+    queryKey: ['mediaImage', entry.id.toString(), entry.image ? 'has-image' : 'no-image'],
     queryFn: async () => {
       try {
-        // For demo purposes, we'll use a simple image placeholder service
-        // In production, you would integrate with TMDB, IGDB, or similar APIs
-        
-        // Generate a consistent color based on the title
-        const hash = title.split('').reduce((acc, char) => {
+        // If the entry has an uploaded image, use it
+        if (entry.image) {
+          if (entry.image.__kind__ === 'external') {
+            // Return the direct URL for external blobs
+            return entry.image.external.getDirectURL();
+          } else if (entry.image.__kind__ === 'embedded') {
+            // Convert embedded bytes to a data URL
+            // Create a new Uint8Array with ArrayBuffer to satisfy type requirements
+            const uint8Array = new Uint8Array(entry.image.embedded);
+            const blob = new Blob([uint8Array], { type: 'image/jpeg' });
+            return URL.createObjectURL(blob);
+          }
+        }
+
+        // Fall back to placeholder service
+        const hash = entry.title.split('').reduce((acc, char) => {
           return char.charCodeAt(0) + ((acc << 5) - acc);
         }, 0);
         
@@ -25,8 +35,7 @@ export function useMediaImage(title: string, mediaType: string): MediaImageResul
         const saturation = 60 + (Math.abs(hash) % 20);
         const lightness = 40 + (Math.abs(hash) % 20);
         
-        // Use a placeholder service with the title
-        const encodedTitle = encodeURIComponent(title);
+        const encodedTitle = encodeURIComponent(entry.title);
         return `https://placehold.co/600x400/hsl(${hue},${saturation}%,${lightness}%)/white?text=${encodedTitle}`;
       } catch (error) {
         console.error('Failed to fetch media image:', error);

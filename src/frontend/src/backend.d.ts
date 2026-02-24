@@ -7,6 +7,13 @@ export interface None {
     __kind__: "None";
 }
 export type Option<T> = Some<T> | None;
+export class ExternalBlob {
+    getBytes(): Promise<Uint8Array<ArrayBuffer>>;
+    getDirectURL(): string;
+    static fromURL(url: string): ExternalBlob;
+    static fromBytes(blob: Uint8Array<ArrayBuffer>): ExternalBlob;
+    withUploadProgress(onProgress: (percentage: number) => void): ExternalBlob;
+}
 export type Time = bigint;
 export interface MediaEntry {
     id: bigint;
@@ -15,14 +22,22 @@ export interface MediaEntry {
     owner: Principal;
     mediaType: MediaType;
     rating?: bigint;
+    image?: Image;
     dateAdded: Time;
 }
-export interface UserProfile {
-    name: string;
-}
+export type Image = {
+    __kind__: "embedded";
+    embedded: Uint8Array;
+} | {
+    __kind__: "external";
+    external: ExternalBlob;
+};
 export interface EmojiReaction {
     count: bigint;
     emoji: string;
+}
+export interface UserProfile {
+    name: string;
 }
 export enum MediaType {
     movie = "movie",
@@ -35,30 +50,21 @@ export enum UserRole {
     guest = "guest"
 }
 export interface backendInterface {
+    addImageToMediaEntry(_contentType: string, mediaId: bigint, image: ExternalBlob): Promise<void>;
     addReaction(reviewId: bigint, emoji: string): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     createMediaEntry(title: string, mediaType: MediaType, rating: bigint | null, review: string | null): Promise<bigint>;
-    deleteMediaEntry(id: bigint): Promise<void>;
-    generateShareLink(expiryTime: Time | null): Promise<bigint>;
-    /**
-     * / This functionality is implemented in the frontend. Motoko cannot directly access the file system.
-     * / Implemented as query to indicate large response to TypeScript (up to 2MB allowed)
-     */
-    getAllProjectFilesZipBlob(): Promise<Uint8Array>;
+    getAllOfficialRecommendations(): Promise<Array<MediaEntry>>;
     getAllReviews(): Promise<Array<MediaEntry>>;
+    getBannerPhoto(): Promise<ExternalBlob | null>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
     getMediaEntriesByShareLink(shareLinkId: bigint): Promise<Array<MediaEntry>>;
     getMediaEntriesByUser(user: Principal): Promise<Array<MediaEntry>>;
-    getMyMediaEntries(): Promise<Array<MediaEntry>>;
     getReactionCounts(reviewId: bigint): Promise<Array<EmojiReaction>>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
-    grantAccessToUser(friend: Principal): Promise<void>;
-    hasUserReacted(reviewId: bigint, emoji: string): Promise<boolean>;
     isCallerAdmin(): Promise<boolean>;
     removeReaction(reviewId: bigint, emoji: string): Promise<void>;
-    revokeAccessFromUser(friend: Principal): Promise<void>;
-    revokeShareLink(shareLinkId: bigint): Promise<void>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
-    updateMediaEntry(id: bigint, title: string, mediaType: MediaType, rating: bigint | null, review: string | null): Promise<void>;
+    setBannerPhoto(newBanner: ExternalBlob): Promise<void>;
 }

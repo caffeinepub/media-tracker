@@ -1,15 +1,11 @@
 # Specification
 
 ## Summary
-**Goal:** Add a Community Reviews page where users can view all reviews from all users in a unified social feed, with emoji reactions for each review.
+**Goal:** Fix photo upload errors, rebrand the application to "Mofongo Tracker", and enable global banner photo customization.
 
 **Planned changes:**
-- Create new /community route displaying all users' reviews in chronological order
-- Add "Community Reviews" navigation link in header
-- Display each review as a card with media title, type badge, rating bar, review text, reviewer name, date, and auto-fetched media image
-- Implement emoji reaction bar (👍 ❤️ 😂 😮 😢 🔥) under each review with real-time count updates
-- Store reactions in backend database, preventing duplicate reactions per user per emoji
-- Style page to match existing dark theme with cinematic aesthetic
-- Create backend endpoint to fetch all reviews across all users
+- Fix the error that occurs after uploading photos in media entries to ensure proper storage and display
+- Rename all instances of "Media Tracker" to "Mofongo Tracker" in the UI and browser title
+- Add functionality for users to change the banner photo displayed globally in the header
 
-**User-visible outcome:** Users can browse a community feed of all reviews from all users, see auto-fetched images for each media item, and react to reviews with emojis that update counts instantly without page refresh.
+**User-visible outcome:** Users can successfully upload photos to media entries without errors, see the application branded as "Mofongo Tracker", and change the banner photo that appears for all users in the header area.

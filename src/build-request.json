@@ -1,152 +1,75 @@
 {
   "kind": "build_request",
-  "title": "Add Community Reviews social feed page with reactions",
-  "projectName": "Media Tracker",
-  "priority": "normal",
+  "title": "Fix photo upload error, rename app to Mofongo Tracker, and add banner photo customization",
+  "projectName": "Mofongo Tracker",
+  "priority": "high",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Create a new Community Reviews page at route /community that displays all users' reviews in a unified feed without linking to individual user collections or profile pages",
+      "text": "Fix the error that occurs after uploading photos in the media entry form to ensure images are properly stored and displayed without errors",
       "target": "both",
       "source": {
         "messageIds": [
-          "msg-6"
+          "msg-7"
+        ],
+        "quotes": [
+          "there is an error after uploading the photos fix it"
         ]
       },
       "acceptanceCriteria": [
-        "New route /community is accessible",
-        "Page displays reviews from all users in chronological order",
-        "No links to user profiles or individual collections are present"
+        "Users can upload photos to media entries without encountering errors",
+        "Uploaded photos are successfully stored in the backend",
+        "Uploaded photos display correctly in MediaCard and CommunityReviewCard components",
+        "No console errors or failed network requests after photo upload"
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Add 'Community Reviews' navigation link in the header that navigates to the new Community Reviews page",
+      "text": "Rename the application from 'Media Tracker' to 'Mofongo Tracker' in all user-facing locations including the HTML title, header logo text, and any other displayed references",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-6"
+          "msg-7"
+        ],
+        "quotes": [
+          "rename, \"Media Tracker\" to \"Mofongo Tracker\""
         ]
       },
       "acceptanceCriteria": [
-        "Navigation link appears in the header alongside existing navigation",
-        "Clicking the link navigates to /community route"
+        "The browser tab title displays 'Mofongo Tracker'",
+        "The header logo area shows 'Mofongo Tracker'",
+        "All references to 'Media Tracker' in the UI are updated to 'Mofongo Tracker'"
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Style Community Reviews page to match the existing dark theme with the same typography, spacing, rounded corners, hover effects, and gold/yellow rating bar style used in 'My Media Collection'",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-6"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Page uses the same dark background colors and warm cinematic palette",
-        "Typography matches existing pages (Inter and Playfair Display fonts)",
-        "Card spacing and rounded corners match MediaCard component",
-        "Hover effects are consistent with existing collection cards"
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "text": "Display each review as a standalone card containing media title, media type badge (Movie, TV Show, Video Game, etc.), rating using the existing RatingBar component, review text, reviewer name in subtle styling, and date posted",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-6"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Each review card shows the media title prominently",
-        "Media type badge displays the correct type with matching styling to existing badges",
-        "RatingBar component renders the rating value",
-        "Review text is displayed in full or with expansion capability",
-        "Reviewer name appears in muted/subtle text styling",
-        "Date posted is formatted and displayed clearly"
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "text": "Automatically fetch and display a relevant image for each review using the media title, placing it at the top of each card with a consistent aspect ratio, showing a clean themed placeholder if no image is found, and implementing lazy loading for performance",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-6"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Images are fetched based on media title",
-        "Images appear at the top of each review card",
-        "All images maintain consistent aspect ratio across cards",
-        "Placeholder image matching the app theme displays when fetch fails",
-        "Images use lazy loading to improve initial page load performance"
-      ]
-    },
-    {
-      "id": "REQ-6",
-      "text": "Implement an emoji reaction bar under each review with 👍 ❤️ 😂 😮 😢 🔥 emojis that allows users to react with dynamic count updates without page refresh",
+      "text": "Add functionality for any user to change the banner photo that is displayed globally for all users in the Layout component header area",
       "target": "both",
       "source": {
         "messageIds": [
-          "msg-6"
+          "msg-7"
+        ],
+        "quotes": [
+          "have an option to change the banner photo for everyone"
         ]
       },
       "acceptanceCriteria": [
-        "Reaction bar displays all six emoji options below each review",
-        "Clicking an emoji increments its count immediately without refresh",
-        "Visual feedback indicates which reactions the current user has selected",
-        "Counts update in real-time when reactions are added"
-      ]
-    },
-    {
-      "id": "REQ-7",
-      "text": "Store emoji reactions per review in the backend database and prevent duplicate reactions from the same user for the same emoji on the same review",
-      "target": "backend",
-      "source": {
-        "messageIds": [
-          "msg-6"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Reactions are persisted in the backend with review ID, user ID, and emoji type",
-        "System prevents a user from reacting with the same emoji multiple times on one review",
-        "Reaction counts are accurately retrieved and aggregated per review",
-        "Users can remove their reaction by clicking the same emoji again"
-      ]
-    },
-    {
-      "id": "REQ-8",
-      "text": "Create backend endpoint to fetch all reviews across all users for the Community Reviews feed",
-      "target": "backend",
-      "source": {
-        "messageIds": [
-          "msg-6"
-        ]
-      },
-      "acceptanceCriteria": [
-        "New query function returns all media entries with reviews from all users",
-        "Response includes reviewer name/identifier for each entry",
-        "Results are sorted by creation date (newest first)",
-        "Function is accessible to all authenticated users"
+        "A UI control is added (e.g., button or admin panel option) that allows users to upload a new banner image",
+        "The uploaded banner image is stored in the backend and persists across sessions",
+        "When a user changes the banner, it updates immediately for all users viewing the application",
+        "The banner image displays correctly in the Layout component's hero section"
       ]
     }
   ],
   "constraints": [
-    "Do not modify the existing My Media Collection page or Dashboard component",
-    "Do not create links to individual user collections or profile pages from Community Reviews",
-    "Maintain the current cinematic aesthetic with warm burgundy and gold tones",
-    "Use the existing RatingBar component without modification",
-    "Preserve all existing backend authorization and access control logic"
+    "Maintain existing authentication and authorization patterns",
+    "Do not modify immutable frontend paths: useInternetIdentity.ts, useInternetIdentity.tsx, useActor.ts, main.tsx, and components/ui/*",
+    "Preserve single-actor backend architecture in backend/main.mo"
   ],
   "nonGoals": [
-    "Redesigning the existing collection page",
-    "Adding user profile pages or profile linking functionality",
-    "Implementing real-time WebSocket updates for reactions",
-    "Adding comment threads or nested discussions on reviews",
-    "Creating notification system for reactions",
-    "Implementing moderation or reporting features"
+    "Changing the core media tracking functionality",
+    "Modifying the existing color scheme or visual theme",
+    "Adding user permissions or access control for banner changes"
   ],
   "imageRequirements": {
     "required": [],

@@ -1,18 +1,21 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useActor } from './useActor';
-import { MediaType } from '../backend';
+import { useInternetIdentity } from './useInternetIdentity';
+import { MediaType, ExternalBlob } from '../backend';
 import { toast } from 'sonner';
 
 export function useGetMyMediaEntries() {
   const { actor, isFetching } = useActor();
+  const { identity } = useInternetIdentity();
 
   return useQuery({
     queryKey: ['myMediaEntries'],
     queryFn: async () => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.getMyMediaEntries();
+      if (!actor || !identity) throw new Error('Actor or identity not available');
+      const principal = identity.getPrincipal();
+      return actor.getMediaEntriesByUser(principal);
     },
-    enabled: !!actor && !isFetching,
+    enabled: !!actor && !!identity && !isFetching,
   });
 }
 
@@ -37,6 +40,7 @@ export function useCreateMediaEntry() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['myMediaEntries'] });
+      queryClient.invalidateQueries({ queryKey: ['allReviews'] });
       toast.success('Media entry created successfully');
     },
     onError: (error: Error) => {
@@ -47,7 +51,6 @@ export function useCreateMediaEntry() {
 }
 
 export function useUpdateMediaEntry() {
-  const { actor } = useActor();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -64,36 +67,81 @@ export function useUpdateMediaEntry() {
       rating: bigint | null;
       review: string | null;
     }) => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.updateMediaEntry(id, title, mediaType, rating, review);
+      // Backend method not implemented yet
+      toast.error('Update functionality is not available yet');
+      throw new Error('updateMediaEntry method not implemented in backend');
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['myMediaEntries'] });
+      queryClient.invalidateQueries({ queryKey: ['allReviews'] });
       toast.success('Media entry updated successfully');
     },
     onError: (error: Error) => {
       console.error('Failed to update media entry:', error);
-      toast.error('Failed to update media entry');
     },
   });
 }
 
 export function useDeleteMediaEntry() {
-  const { actor } = useActor();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (id: bigint) => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.deleteMediaEntry(id);
+      // Backend method not implemented yet
+      toast.error('Delete functionality is not available yet');
+      throw new Error('deleteMediaEntry method not implemented in backend');
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['myMediaEntries'] });
+      queryClient.invalidateQueries({ queryKey: ['allReviews'] });
       toast.success('Media entry deleted successfully');
     },
     onError: (error: Error) => {
       console.error('Failed to delete media entry:', error);
-      toast.error('Failed to delete media entry');
+    },
+  });
+}
+
+export function useAddImageToMediaEntry() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      mediaId,
+      imageData,
+      onProgress,
+    }: {
+      mediaId: bigint;
+      imageData: Uint8Array;
+      onProgress?: (percentage: number) => void;
+    }) => {
+      if (!actor) throw new Error('Actor not available');
+
+      // Convert to Uint8Array<ArrayBuffer> to match the expected type
+      const buffer = new ArrayBuffer(imageData.length);
+      const typedArray = new Uint8Array(buffer);
+      typedArray.set(imageData);
+
+      // Create ExternalBlob with upload progress tracking
+      let blob = ExternalBlob.fromBytes(typedArray);
+      
+      if (onProgress) {
+        blob = blob.withUploadProgress(onProgress);
+      }
+
+      // Upload the image to the backend
+      await actor.addImageToMediaEntry('image/jpeg', mediaId, blob);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['myMediaEntries'] });
+      queryClient.invalidateQueries({ queryKey: ['allReviews'] });
+      queryClient.invalidateQueries({ queryKey: ['sharedMediaEntries'] });
+      toast.success('Image uploaded successfully');
+    },
+    onError: (error: Error) => {
+      console.error('Failed to upload image:', error);
+      toast.error('Failed to upload image');
     },
   });
 }

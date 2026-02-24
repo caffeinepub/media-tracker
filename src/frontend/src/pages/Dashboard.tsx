@@ -72,7 +72,7 @@ export default function Dashboard() {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center space-y-4">
-          <h2 className="text-2xl font-serif font-bold text-foreground">Welcome to Media Tracker</h2>
+          <h2 className="text-2xl font-serif font-bold text-foreground">Welcome to Mofongo Tracker</h2>
           <p className="text-muted-foreground">Please log in to view your media collection</p>
         </div>
       </div>
@@ -105,7 +105,7 @@ export default function Dashboard() {
 
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
             type="text"
             placeholder="Search by title..."

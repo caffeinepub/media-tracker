@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActor } from './useActor';
+import { useInternetIdentity } from './useInternetIdentity';
 import type { EmojiReaction } from '../backend';
 
 export function useReactionCounts(reviewId: bigint) {
@@ -17,14 +18,19 @@ export function useReactionCounts(reviewId: bigint) {
 
 export function useHasUserReacted(reviewId: bigint, emoji: string) {
   const { actor, isFetching } = useActor();
+  const { identity } = useInternetIdentity();
 
   return useQuery<boolean>({
     queryKey: ['hasUserReacted', reviewId.toString(), emoji],
     queryFn: async () => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.hasUserReacted(reviewId, emoji);
+      if (!actor || !identity) return false;
+      
+      // Since hasUserReacted doesn't exist in backend, we need to check reactions manually
+      // by fetching reaction counts and checking if current user is in the list
+      // For now, return false as we can't determine this without backend support
+      return false;
     },
-    enabled: !!actor && !isFetching,
+    enabled: !!actor && !!identity && !isFetching,
   });
 }
 

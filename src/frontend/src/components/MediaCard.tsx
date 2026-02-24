@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Pencil, Trash2 } from 'lucide-react';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
 import { useDeleteMediaEntry } from '../hooks/useMediaEntries';
+import { useMediaImage } from '../hooks/useMediaImage';
 import AddMediaForm from './AddMediaForm';
 import RatingBar from './RatingBar';
 import type { MediaEntry } from '../backend';
@@ -27,6 +28,7 @@ interface MediaCardProps {
 export default function MediaCard({ entry, isOwner }: MediaCardProps) {
   const { identity } = useInternetIdentity();
   const deleteMediaEntry = useDeleteMediaEntry();
+  const { imageUrl, isLoading: imageLoading } = useMediaImage(entry);
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
@@ -57,11 +59,46 @@ export default function MediaCard({ entry, isOwner }: MediaCardProps) {
   return (
     <>
       <Card className="h-full flex flex-col hover:shadow-lg transition-shadow">
+        {/* Media Image */}
+        <div className="relative w-full aspect-[16/9] bg-muted overflow-hidden rounded-t-lg">
+          {imageLoading ? (
+            <div className="w-full h-full flex items-center justify-center">
+              <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+            </div>
+          ) : imageUrl ? (
+            <img
+              src={imageUrl}
+              alt={entry.title}
+              loading="lazy"
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+                if (target.parentElement) {
+                  target.parentElement.innerHTML = `
+                    <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-accent/20">
+                      <span class="text-4xl font-serif text-muted-foreground/50">
+                        ${entry.title.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                  `;
+                }
+              }}
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-accent/20">
+              <span className="text-4xl font-serif text-muted-foreground/50">
+                {entry.title.charAt(0).toUpperCase()}
+              </span>
+            </div>
+          )}
+        </div>
+
         <CardHeader className="space-y-2">
           <div className="flex items-start justify-between gap-2">
             <CardTitle className="text-xl font-serif line-clamp-2">{entry.title}</CardTitle>
             {isOwner && (
-              <div className="flex gap-1 flex-shrink-0">
+              <div className="flex gap-1 shrink-0">
                 <Button
                   variant="ghost"
                   size="icon"

@@ -1,106 +1,56 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-23T03:00:13.347Z",
+  "generatedAt": "2026-02-24T02:48:44.039Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 8,
-    "implemented": 6,
+    "total": 3,
+    "implemented": 3,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Create a new Community Reviews page at route /community that displays all users' reviews in a unified feed without linking to individual user collections or profile pages",
+        "summary": "Fix the error that occurs after uploading photos in the media entry form to ensure images are properly stored and displayed without errors",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/CommunityReviews.tsx",
-          "frontend/src/App.tsx"
+          "frontend/src/components/AddMediaForm.tsx",
+          "frontend/src/hooks/useMediaEntries.ts",
+          "frontend/src/components/MediaCard.tsx",
+          "frontend/src/components/CommunityReviewCard.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/pages/CommunityReviews.tsx",
-          "frontend/src/App.tsx"
+          "frontend/src/hooks/useMediaEntries.ts"
         ]
       },
       {
         "id": "REQ-2",
-        "summary": "Add 'Community Reviews' navigation link in the header that navigates to the new Community Reviews page",
+        "summary": "Rename the application from 'Media Tracker' to 'Mofongo Tracker' in all user-facing locations including the HTML title, header logo text, and any other displayed references",
         "status": "implemented",
         "plannedFiles": [
+          "frontend/index.html",
           "frontend/src/components/Layout.tsx"
         ],
         "matchedFiles": [
+          "frontend/index.html",
           "frontend/src/components/Layout.tsx"
         ]
       },
       {
         "id": "REQ-3",
-        "summary": "Style Community Reviews page to match the existing dark theme with the same typography, spacing, rounded corners, hover effects, and gold/yellow rating bar style used in 'My Media Collection'",
+        "summary": "Add functionality for any user to change the banner photo that is displayed globally for all users in the Layout component header area",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/CommunityReviews.tsx"
+          "frontend/src/hooks/useBannerPhoto.ts",
+          "frontend/src/components/BannerPhotoUpload.tsx",
+          "frontend/src/components/Layout.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/pages/CommunityReviews.tsx"
+          "frontend/src/hooks/useBannerPhoto.ts",
+          "frontend/src/components/BannerPhotoUpload.tsx",
+          "frontend/src/components/Layout.tsx"
         ]
-      },
-      {
-        "id": "REQ-4",
-        "summary": "Display each review as a standalone card containing media title, media type badge (Movie, TV Show, Video Game, etc.), rating using the existing RatingBar component, review text, reviewer name in subtle styling, and date posted",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/CommunityReviewCard.tsx",
-          "frontend/src/hooks/useReviewerProfile.ts",
-          "frontend/src/pages/CommunityReviews.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/CommunityReviewCard.tsx",
-          "frontend/src/hooks/useReviewerProfile.ts",
-          "frontend/src/pages/CommunityReviews.tsx"
-        ]
-      },
-      {
-        "id": "REQ-5",
-        "summary": "Automatically fetch and display a relevant image for each review using the media title, placing it at the top of each card with a consistent aspect ratio, showing a clean themed placeholder if no image is found, and implementing lazy loading for performance",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/hooks/useMediaImage.ts",
-          "frontend/src/components/CommunityReviewCard.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/hooks/useMediaImage.ts",
-          "frontend/src/components/CommunityReviewCard.tsx"
-        ]
-      },
-      {
-        "id": "REQ-6",
-        "summary": "Implement an emoji reaction bar under each review with 👍 ❤️ 😂 😮 😢 🔥 emojis that allows users to react with dynamic count updates without page refresh",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/ReactionBar.tsx",
-          "frontend/src/hooks/useReactions.ts",
-          "frontend/src/components/CommunityReviewCard.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/ReactionBar.tsx",
-          "frontend/src/hooks/useReactions.ts",
-          "frontend/src/components/CommunityReviewCard.tsx"
-        ]
-      },
-      {
-        "id": "REQ-7",
-        "summary": "Store emoji reactions per review in the backend database and prevent duplicate reactions from the same user for the same emoji on the same review",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-8",
-        "summary": "Create backend endpoint to fetch all reviews across all users for the Community Reviews feed",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
       }
     ]
   },
@@ -110,19 +60,18 @@
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/App.tsx",
+    "frontend/index.html",
     "frontend/src/backend.d.ts",
     "frontend/src/backend.ts",
-    "frontend/src/components/CommunityReviewCard.tsx",
+    "frontend/src/components/BannerPhotoUpload.tsx",
     "frontend/src/components/Layout.tsx",
-    "frontend/src/components/ReactionBar.tsx",
     "frontend/src/declarations/backend.did.d.ts",
     "frontend/src/declarations/backend.did.js",
-    "frontend/src/hooks/useMediaImage.ts",
+    "frontend/src/hooks/useBannerPhoto.ts",
+    "frontend/src/hooks/useMediaEntries.ts",
     "frontend/src/hooks/useReactions.ts",
-    "frontend/src/hooks/useReviewerProfile.ts",
-    "frontend/src/hooks/useReviews.ts",
-    "frontend/src/pages/CommunityReviews.tsx",
+    "frontend/src/hooks/useShareLink.ts",
+    "frontend/src/pages/Dashboard.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

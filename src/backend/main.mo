@@ -7,19 +7,35 @@ import Iter "mo:core/Iter";
 import Runtime "mo:core/Runtime";
 import Time "mo:core/Time";
 import Blob "mo:core/Blob";
-
+import Storage "blob-storage/Storage";
+import List "mo:core/List";
+import MixinStorage "blob-storage/Mixin";
 import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
 
+// Data migration: Return new version on upgrade (invisible for users)
+
 actor {
+  // Initialize the user system state to store authentication information
   let accessControlState = AccessControl.initState();
-  include MixinAuthorization(accessControlState);
+
+  type OldMediaEntry = {
+    id : Nat64;
+    title : Text;
+    mediaType : MediaType;
+    rating : ?Nat;
+    review : ?Text;
+    dateAdded : Time.Time;
+    owner : Principal;
+  };
 
   type MediaType = {
     #movie;
     #tvShow;
     #videoGame;
   };
+
+  public type Image = { #embedded : Blob; #external : Storage.ExternalBlob };
 
   type MediaEntry = {
     id : Nat64;
@@ -29,6 +45,7 @@ actor {
     review : ?Text;
     dateAdded : Time.Time;
     owner : Principal;
+    image : ?Image;
   };
 
   type ShareLink = {
@@ -49,15 +66,23 @@ actor {
   var nextMediaId : Nat64 = 0;
   var nextShareLinkId : Nat64 = 0;
 
+  // Use the StorageMixin for persistent storage access
+  include MixinStorage();
+
   let mediaEntries = Map.empty<Nat64, MediaEntry>();
   let userShares = Map.empty<Principal, [Principal]>();
   let shareLinks = Map.empty<Nat64, ShareLink>();
   let userProfiles = Map.empty<Principal, UserProfile>();
-
+  // New banner photo system
+  var bannerPhoto : ?Storage.ExternalBlob = null;
   // New reactions feature state
   let reviewReactions = Map.empty<Nat64, Map.Map<Text, [Principal]>>();
+  // Community content page state
+  let officialRecommendations = Map.empty<Nat64, MediaEntry>();
 
-  // User profile management functions
+  // Include authentication system from 'MixinAuthorization.mo'
+  include MixinAuthorization(accessControlState);
+
   public query ({ caller }) func getCallerUserProfile() : async ?UserProfile {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can access profiles");
@@ -79,7 +104,106 @@ actor {
     userProfiles.add(caller, profile);
   };
 
+  public query ({ caller }) func getBannerPhoto() : async ?Storage.ExternalBlob {
+    bannerPhoto;
+  };
+
+  public shared ({ caller }) func setBannerPhoto(newBanner : Storage.ExternalBlob) : async () {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can change banner photo");
+    };
+
+    bannerPhoto := ?newBanner;
+  };
+
+  // New Community content page functions
+
+  public query ({ caller }) func getAllReviews() : async [MediaEntry] {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only authenticated users can view reviews");
+    };
+
+    let entries = mediaEntries.values();
+    entries.toArray().filter(
+      func(entry) {
+        switch (entry.review) {
+          case (?text) { text.size() > 0 };
+          case (null) { false };
+        };
+      }
+    );
+  };
+
+  public query ({ caller }) func getAllOfficialRecommendations() : async [MediaEntry] {
+    officialRecommendations.values().toArray();
+  };
+
+  public query ({ caller }) func getReactionCounts(reviewId : Nat64) : async [EmojiReaction] {
+    switch (mediaEntries.get(reviewId)) {
+      case (null) { Runtime.trap("Review does not exist") };
+      case (?_) {};
+    };
+
+    let reactionsMap = switch (reviewReactions.get(reviewId)) {
+      case (?map) { map };
+      case (null) { Map.empty<Text, [Principal]>() };
+    };
+
+    let coreEmojis = ["👍", "❤️", "😂", "😮", "😢", "🔥"];
+    coreEmojis.map(
+      func(emoji) {
+        let count = switch (reactionsMap.get(emoji)) {
+          case (?arr) { arr.size() };
+          case (null) { 0 };
+        };
+        {
+          emoji;
+          count;
+        };
+      }
+    );
+  };
+
+  public shared ({ caller }) func addReaction(reviewId : Nat64, emoji : Text) : async () {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only authenticated users can add reactions");
+    };
+
+    if (caller.isAnonymous()) {
+      Runtime.trap("Anonymous users cannot add reactions");
+    };
+
+    switch (mediaEntries.get(reviewId)) {
+      case (null) { Runtime.trap("Review does not exist") };
+      case (?_) {};
+    };
+
+    let reviewReactionMap = switch (reviewReactions.get(reviewId)) {
+      case (?map) { map };
+      case (null) {
+        let newMap = Map.empty<Text, [Principal]>();
+        reviewReactions.add(reviewId, newMap);
+        newMap;
+      };
+    };
+
+    let existingReactions = switch (reviewReactionMap.get(emoji)) {
+      case (?arr) { arr };
+      case (null) { [] };
+    };
+
+    if (existingReactions.values().contains(caller)) {
+      Runtime.trap("You have already added this reaction");
+    };
+
+    let newReactions = existingReactions.concat([caller]);
+    reviewReactionMap.add(emoji, newReactions);
+  };
+
+  // Outstanding Loan functions
+
   // Media entry management functions
+
   public shared ({ caller }) func createMediaEntry(title : Text, mediaType : MediaType, rating : ?Nat, review : ?Text) : async Nat64 {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can create media entries");
@@ -93,11 +217,30 @@ actor {
       review;
       dateAdded = Time.now();
       owner = caller;
+      image = null;
     };
 
     mediaEntries.add(nextMediaId, mediaEntry);
     nextMediaId += 1;
     mediaEntry.id;
+  };
+
+  public shared ({ caller }) func addImageToMediaEntry(_contentType : Text, mediaId : Nat64, image : Storage.ExternalBlob) : async () {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can add images");
+    };
+
+    let entry = switch (mediaEntries.get(mediaId)) {
+      case (null) { Runtime.trap("Media entry does not exist") };
+      case (?entry) { entry };
+    };
+
+    if (entry.owner != caller and not AccessControl.isAdmin(accessControlState, caller)) {
+      Runtime.trap("Unauthorized: You can only add images to your own entries");
+    };
+
+    let entryWithImage = { entry with image = ?#external(image) };
+    mediaEntries.add(mediaId, entryWithImage);
   };
 
   public query ({ caller }) func getMediaEntriesByUser(user : Principal) : async [MediaEntry] {
@@ -150,246 +293,6 @@ actor {
         );
       };
       case (null) { Runtime.trap("Invalid share link") };
-    };
-  };
-
-  public shared ({ caller }) func grantAccessToUser(friend : Principal) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only users can grant access");
-    };
-
-    if (friend.isAnonymous()) {
-      Runtime.trap("Cannot grant access to anonymous principal");
-    };
-
-    let existingArray = switch (userShares.get(caller)) {
-      case (?arr) { arr };
-      case (null) { [] };
-    };
-
-    if (existingArray.values().contains(friend)) {
-      Runtime.trap("Already granted access to this user");
-    };
-
-    let newArray = existingArray.concat([friend]);
-    userShares.add(caller, newArray);
-  };
-
-  public shared ({ caller }) func revokeAccessFromUser(friend : Principal) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only users can revoke access");
-    };
-
-    switch (userShares.get(caller)) {
-      case (?array) {
-        let newArray = array.filter(func(p : Principal) : Bool { p != friend });
-        userShares.add(caller, newArray);
-      };
-      case (null) {
-        Runtime.trap("No access grants found");
-      };
-    };
-  };
-
-  public shared ({ caller }) func generateShareLink(expiryTime : ?Time.Time) : async Nat64 {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only users can generate share links");
-    };
-
-    switch (expiryTime) {
-      case (?expiry) {
-        if (expiry <= Time.now()) {
-          Runtime.trap("Expiry time must be in the future");
-        };
-      };
-      case (null) {};
-    };
-
-    let shareLink : ShareLink = {
-      id = nextShareLinkId;
-      owner = caller;
-      expiresAt = expiryTime;
-    };
-
-    shareLinks.add(nextShareLinkId, shareLink);
-    nextShareLinkId += 1;
-    shareLink.id;
-  };
-
-  public shared ({ caller }) func revokeShareLink(shareLinkId : Nat64) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only users can revoke share links");
-    };
-
-    switch (shareLinks.get(shareLinkId)) {
-      case (?link) {
-        if (link.owner != caller and not AccessControl.isAdmin(accessControlState, caller)) {
-          Runtime.trap("You can only revoke your own share links");
-        };
-        shareLinks.remove(shareLinkId);
-      };
-      case (null) {
-        Runtime.trap("Share link does not exist");
-      };
-    };
-  };
-
-  public shared ({ caller }) func updateMediaEntry(id : Nat64, title : Text, mediaType : MediaType, rating : ?Nat, review : ?Text) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only users can update entries");
-    };
-
-    switch (mediaEntries.get(id)) {
-      case (?existingEntry) {
-        if (existingEntry.owner != caller and not AccessControl.isAdmin(accessControlState, caller)) {
-          Runtime.trap("You can only modify your own entries");
-        };
-
-        let updatedEntry : MediaEntry = {
-          id;
-          title;
-          mediaType;
-          rating;
-          review;
-          dateAdded = existingEntry.dateAdded;
-          owner = existingEntry.owner;
-        };
-
-        mediaEntries.add(id, updatedEntry);
-      };
-      case (null) { Runtime.trap("Entry does not exist") };
-    };
-  };
-
-  public shared ({ caller }) func deleteMediaEntry(id : Nat64) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only users can delete entries");
-    };
-
-    switch (mediaEntries.get(id)) {
-      case (?entry) {
-        if (entry.owner != caller and not AccessControl.isAdmin(accessControlState, caller)) {
-          Runtime.trap("You can only delete your own entries");
-        };
-
-        mediaEntries.remove(id);
-      };
-      case (null) { Runtime.trap("Entry does not exist") };
-    };
-  };
-
-  public query ({ caller }) func getMyMediaEntries() : async [MediaEntry] {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only users can view their entries");
-    };
-
-    mediaEntries.values().toArray().filter(
-      func(entry) {
-        entry.owner == caller;
-      }
-    );
-  };
-
-  /// This functionality is implemented in the frontend. Motoko cannot directly access the file system.
-  /// Implemented as query to indicate large response to TypeScript (up to 2MB allowed)
-  public query ({ caller }) func getAllProjectFilesZipBlob() : async Blob {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can download project source files");
-    };
-    Runtime.trap("Functionality is TypeScript only. Please remove Motoko code and 'dfx deploy' again.");
-  };
-
-  // New Backend functionality for community page and emoji reactions
-
-  public query ({ caller }) func getAllReviews() : async [MediaEntry] {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only authenticated users can view reviews");
-    };
-
-    let entries = mediaEntries.values();
-    entries.toArray().filter(
-      func(entry) {
-        switch (entry.review) {
-          case (?text) { text.size() > 0 };
-          case (null) { false };
-        };
-      }
-    );
-  };
-
-  public shared ({ caller }) func addReaction(reviewId : Nat64, emoji : Text) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only authenticated users can add reactions");
-    };
-
-    if (caller.isAnonymous()) {
-      Runtime.trap("Anonymous users cannot add reactions");
-    };
-
-    switch (mediaEntries.get(reviewId)) {
-      case (null) { Runtime.trap("Review does not exist") };
-      case (?_) {};
-    };
-
-    let reviewReactionMap = switch (reviewReactions.get(reviewId)) {
-      case (?map) { map };
-      case (null) {
-        let newMap = Map.empty<Text, [Principal]>();
-        reviewReactions.add(reviewId, newMap);
-        newMap;
-      };
-    };
-
-    let existingReactions = switch (reviewReactionMap.get(emoji)) {
-      case (?arr) { arr };
-      case (null) { [] };
-    };
-
-    if (existingReactions.values().contains(caller)) {
-      Runtime.trap("You have already added this reaction");
-    };
-
-    let newReactions = existingReactions.concat([caller]);
-    reviewReactionMap.add(emoji, newReactions);
-  };
-
-  public query ({ caller }) func getReactionCounts(reviewId : Nat64) : async [EmojiReaction] {
-    switch (mediaEntries.get(reviewId)) {
-      case (null) { Runtime.trap("Review does not exist") };
-      case (?_) {};
-    };
-
-    let reactionsMap = switch (reviewReactions.get(reviewId)) {
-      case (?map) { map };
-      case (null) { Map.empty<Text, [Principal]>() };
-    };
-
-    let coreEmojis = ["👍", "❤️", "😂", "😮", "😢", "🔥"];
-    coreEmojis.map(
-      func(emoji) {
-        let count = switch (reactionsMap.get(emoji)) {
-          case (?arr) { arr.size() };
-          case (null) { 0 };
-        };
-        {
-          emoji;
-          count;
-        };
-      }
-    );
-  };
-
-  public query ({ caller }) func hasUserReacted(reviewId : Nat64, emoji : Text) : async Bool {
-    switch (reviewReactions.get(reviewId)) {
-      case (?reactionMap) {
-        switch (reactionMap.get(emoji)) {
-          case (?userArray) {
-            return userArray.values().contains(caller);
-          };
-          case (null) { return false };
-        };
-      };
-      case (null) { return false };
     };
   };
 

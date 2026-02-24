@@ -4,29 +4,27 @@ import { MediaEntry, UserProfile } from '../backend';
 import { toast } from 'sonner';
 
 export function useGenerateShareLink() {
-  const { actor } = useActor();
-
   return useMutation({
     mutationFn: async (expiryTime: bigint | null) => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.generateShareLink(expiryTime);
+      // Backend method not implemented yet
+      toast.error('Share link functionality is not available yet');
+      throw new Error('generateShareLink method not implemented in backend');
     },
     onError: (error) => {
-      toast.error(error instanceof Error ? error.message : 'Failed to generate share link');
+      console.error('Failed to generate share link:', error);
     },
   });
 }
 
 export function useRevokeShareLink() {
-  const { actor } = useActor();
-
   return useMutation({
     mutationFn: async (shareLinkId: bigint) => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.revokeShareLink(shareLinkId);
+      // Backend method not implemented yet
+      toast.error('Revoke share link functionality is not available yet');
+      throw new Error('revokeShareLink method not implemented in backend');
     },
     onError: (error) => {
-      toast.error(error instanceof Error ? error.message : 'Failed to revoke share link');
+      console.error('Failed to revoke share link:', error);
     },
   });
 }

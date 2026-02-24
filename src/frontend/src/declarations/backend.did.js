@@ -8,6 +8,18 @@
 
 import { IDL } from '@icp-sdk/core/candid';
 
+export const _CaffeineStorageCreateCertificateResult = IDL.Record({
+  'method' : IDL.Text,
+  'blob_hash' : IDL.Text,
+});
+export const _CaffeineStorageRefillInformation = IDL.Record({
+  'proposed_top_up_amount' : IDL.Opt(IDL.Nat),
+});
+export const _CaffeineStorageRefillResult = IDL.Record({
+  'success' : IDL.Opt(IDL.Bool),
+  'topped_up_amount' : IDL.Opt(IDL.Nat),
+});
+export const ExternalBlob = IDL.Vec(IDL.Nat8);
 export const UserRole = IDL.Variant({
   'admin' : IDL.Null,
   'user' : IDL.Null,
@@ -18,6 +30,10 @@ export const MediaType = IDL.Variant({
   'videoGame' : IDL.Null,
   'tvShow' : IDL.Null,
 });
+export const Image = IDL.Variant({
+  'embedded' : IDL.Vec(IDL.Nat8),
+  'external' : ExternalBlob,
+});
 export const Time = IDL.Int;
 export const MediaEntry = IDL.Record({
   'id' : IDL.Nat64,
@@ -26,6 +42,7 @@ export const MediaEntry = IDL.Record({
   'owner' : IDL.Principal,
   'mediaType' : MediaType,
   'rating' : IDL.Opt(IDL.Nat),
+  'image' : IDL.Opt(Image),
   'dateAdded' : Time,
 });
 export const UserProfile = IDL.Record({ 'name' : IDL.Text });
@@ -35,7 +52,38 @@ export const EmojiReaction = IDL.Record({
 });
 
 export const idlService = IDL.Service({
+  '_caffeineStorageBlobIsLive' : IDL.Func(
+      [IDL.Vec(IDL.Nat8)],
+      [IDL.Bool],
+      ['query'],
+    ),
+  '_caffeineStorageBlobsToDelete' : IDL.Func(
+      [],
+      [IDL.Vec(IDL.Vec(IDL.Nat8))],
+      ['query'],
+    ),
+  '_caffeineStorageConfirmBlobDeletion' : IDL.Func(
+      [IDL.Vec(IDL.Vec(IDL.Nat8))],
+      [],
+      [],
+    ),
+  '_caffeineStorageCreateCertificate' : IDL.Func(
+      [IDL.Text],
+      [_CaffeineStorageCreateCertificateResult],
+      [],
+    ),
+  '_caffeineStorageRefillCashier' : IDL.Func(
+      [IDL.Opt(_CaffeineStorageRefillInformation)],
+      [_CaffeineStorageRefillResult],
+      [],
+    ),
+  '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+  'addImageToMediaEntry' : IDL.Func(
+      [IDL.Text, IDL.Nat64, ExternalBlob],
+      [],
+      [],
+    ),
   'addReaction' : IDL.Func([IDL.Nat64, IDL.Text], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
   'createMediaEntry' : IDL.Func(
@@ -43,10 +91,13 @@ export const idlService = IDL.Service({
       [IDL.Nat64],
       [],
     ),
-  'deleteMediaEntry' : IDL.Func([IDL.Nat64], [], []),
-  'generateShareLink' : IDL.Func([IDL.Opt(Time)], [IDL.Nat64], []),
-  'getAllProjectFilesZipBlob' : IDL.Func([], [IDL.Vec(IDL.Nat8)], ['query']),
+  'getAllOfficialRecommendations' : IDL.Func(
+      [],
+      [IDL.Vec(MediaEntry)],
+      ['query'],
+    ),
   'getAllReviews' : IDL.Func([], [IDL.Vec(MediaEntry)], ['query']),
+  'getBannerPhoto' : IDL.Func([], [IDL.Opt(ExternalBlob)], ['query']),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
   'getMediaEntriesByShareLink' : IDL.Func(
@@ -59,7 +110,6 @@ export const idlService = IDL.Service({
       [IDL.Vec(MediaEntry)],
       ['query'],
     ),
-  'getMyMediaEntries' : IDL.Func([], [IDL.Vec(MediaEntry)], ['query']),
   'getReactionCounts' : IDL.Func(
       [IDL.Nat64],
       [IDL.Vec(EmojiReaction)],
@@ -70,23 +120,27 @@ export const idlService = IDL.Service({
       [IDL.Opt(UserProfile)],
       ['query'],
     ),
-  'grantAccessToUser' : IDL.Func([IDL.Principal], [], []),
-  'hasUserReacted' : IDL.Func([IDL.Nat64, IDL.Text], [IDL.Bool], ['query']),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
   'removeReaction' : IDL.Func([IDL.Nat64, IDL.Text], [], []),
-  'revokeAccessFromUser' : IDL.Func([IDL.Principal], [], []),
-  'revokeShareLink' : IDL.Func([IDL.Nat64], [], []),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
-  'updateMediaEntry' : IDL.Func(
-      [IDL.Nat64, IDL.Text, MediaType, IDL.Opt(IDL.Nat), IDL.Opt(IDL.Text)],
-      [],
-      [],
-    ),
+  'setBannerPhoto' : IDL.Func([ExternalBlob], [], []),
 });
 
 export const idlInitArgs = [];
 
 export const idlFactory = ({ IDL }) => {
+  const _CaffeineStorageCreateCertificateResult = IDL.Record({
+    'method' : IDL.Text,
+    'blob_hash' : IDL.Text,
+  });
+  const _CaffeineStorageRefillInformation = IDL.Record({
+    'proposed_top_up_amount' : IDL.Opt(IDL.Nat),
+  });
+  const _CaffeineStorageRefillResult = IDL.Record({
+    'success' : IDL.Opt(IDL.Bool),
+    'topped_up_amount' : IDL.Opt(IDL.Nat),
+  });
+  const ExternalBlob = IDL.Vec(IDL.Nat8);
   const UserRole = IDL.Variant({
     'admin' : IDL.Null,
     'user' : IDL.Null,
@@ -97,6 +151,10 @@ export const idlFactory = ({ IDL }) => {
     'videoGame' : IDL.Null,
     'tvShow' : IDL.Null,
   });
+  const Image = IDL.Variant({
+    'embedded' : IDL.Vec(IDL.Nat8),
+    'external' : ExternalBlob,
+  });
   const Time = IDL.Int;
   const MediaEntry = IDL.Record({
     'id' : IDL.Nat64,
@@ -105,13 +163,45 @@ export const idlFactory = ({ IDL }) => {
     'owner' : IDL.Principal,
     'mediaType' : MediaType,
     'rating' : IDL.Opt(IDL.Nat),
+    'image' : IDL.Opt(Image),
     'dateAdded' : Time,
   });
   const UserProfile = IDL.Record({ 'name' : IDL.Text });
   const EmojiReaction = IDL.Record({ 'count' : IDL.Nat, 'emoji' : IDL.Text });
   
   return IDL.Service({
+    '_caffeineStorageBlobIsLive' : IDL.Func(
+        [IDL.Vec(IDL.Nat8)],
+        [IDL.Bool],
+        ['query'],
+      ),
+    '_caffeineStorageBlobsToDelete' : IDL.Func(
+        [],
+        [IDL.Vec(IDL.Vec(IDL.Nat8))],
+        ['query'],
+      ),
+    '_caffeineStorageConfirmBlobDeletion' : IDL.Func(
+        [IDL.Vec(IDL.Vec(IDL.Nat8))],
+        [],
+        [],
+      ),
+    '_caffeineStorageCreateCertificate' : IDL.Func(
+        [IDL.Text],
+        [_CaffeineStorageCreateCertificateResult],
+        [],
+      ),
+    '_caffeineStorageRefillCashier' : IDL.Func(
+        [IDL.Opt(_CaffeineStorageRefillInformation)],
+        [_CaffeineStorageRefillResult],
+        [],
+      ),
+    '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+    'addImageToMediaEntry' : IDL.Func(
+        [IDL.Text, IDL.Nat64, ExternalBlob],
+        [],
+        [],
+      ),
     'addReaction' : IDL.Func([IDL.Nat64, IDL.Text], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
     'createMediaEntry' : IDL.Func(
@@ -119,10 +209,13 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Nat64],
         [],
       ),
-    'deleteMediaEntry' : IDL.Func([IDL.Nat64], [], []),
-    'generateShareLink' : IDL.Func([IDL.Opt(Time)], [IDL.Nat64], []),
-    'getAllProjectFilesZipBlob' : IDL.Func([], [IDL.Vec(IDL.Nat8)], ['query']),
+    'getAllOfficialRecommendations' : IDL.Func(
+        [],
+        [IDL.Vec(MediaEntry)],
+        ['query'],
+      ),
     'getAllReviews' : IDL.Func([], [IDL.Vec(MediaEntry)], ['query']),
+    'getBannerPhoto' : IDL.Func([], [IDL.Opt(ExternalBlob)], ['query']),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
     'getMediaEntriesByShareLink' : IDL.Func(
@@ -135,7 +228,6 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(MediaEntry)],
         ['query'],
       ),
-    'getMyMediaEntries' : IDL.Func([], [IDL.Vec(MediaEntry)], ['query']),
     'getReactionCounts' : IDL.Func(
         [IDL.Nat64],
         [IDL.Vec(EmojiReaction)],
@@ -146,18 +238,10 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Opt(UserProfile)],
         ['query'],
       ),
-    'grantAccessToUser' : IDL.Func([IDL.Principal], [], []),
-    'hasUserReacted' : IDL.Func([IDL.Nat64, IDL.Text], [IDL.Bool], ['query']),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
     'removeReaction' : IDL.Func([IDL.Nat64, IDL.Text], [], []),
-    'revokeAccessFromUser' : IDL.Func([IDL.Principal], [], []),
-    'revokeShareLink' : IDL.Func([IDL.Nat64], [], []),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
-    'updateMediaEntry' : IDL.Func(
-        [IDL.Nat64, IDL.Text, MediaType, IDL.Opt(IDL.Nat), IDL.Opt(IDL.Text)],
-        [],
-        [],
-      ),
+    'setBannerPhoto' : IDL.Func([ExternalBlob], [], []),
   });
 };
 
